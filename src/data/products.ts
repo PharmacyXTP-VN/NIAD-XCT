@@ -175,3 +175,16 @@ export const products = [
     fuel: "Xăng, 2.0L",
   },
 ];
+
+// Định nghĩa type Product nếu chưa có
+export type Product = {
+  id: number;
+  name: string;
+  category: string;
+  price: string;
+  image: string;
+  desc: string;
+  seats: string;
+  transmission: string;
+  fuel: string;
+};

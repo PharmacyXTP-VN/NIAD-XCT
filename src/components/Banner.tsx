@@ -6,6 +6,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Image from "next/image";
 
 const bannerImages = [
   "/images/banners/xepajero1.png",
@@ -33,10 +34,13 @@ export default function Banner() {
       <Slider {...settings}>
         {bannerImages.map((src, index) => (
           <div key={index}>
-            <img
+            <Image
               src={src}
               alt={`Slide ${index + 1}`}
               className="w-screen h-screen object-cover"
+              width={1920}
+              height={1080}
+              priority={index === 0}
             />
           </div>
         ))}

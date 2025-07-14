@@ -80,10 +80,13 @@ export default function NewsSection() {
           {/* Tin chính bên trái */}
           <div className="lg:col-span-2">
             <div className="rounded-xl overflow-hidden shadow">
-              <img
+              <Image
                 src={newsList[0].image}
                 alt={newsList[0].title}
                 className="w-full h-96 object-cover"
+                width={800}
+                height={384}
+                priority
               />
               <div className="bg-white p-6">
                 <p className="text-sm text-gray-500">{newsList[0].date}</p>
@@ -104,10 +107,12 @@ export default function NewsSection() {
                 key={idx}
                 className="rounded-lg overflow-hidden border shadow"
               >
-                <img
+                <Image
                   src={news.image}
                   alt={news.title}
                   className="w-full h-28 object-cover"
+                  width={400}
+                  height={112}
                 />
                 <div className="bg-white p-3">
                   <p className="text-xs text-gray-500">{news.date}</p>

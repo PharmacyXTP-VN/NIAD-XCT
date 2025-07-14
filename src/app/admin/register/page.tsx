@@ -10,15 +10,24 @@ export default function RegisterAdminPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await registerAdmin(email, password);
       const res = await loginAdmin(email, password);
       localStorage.setItem("adminToken", res.token);
       router.push("/admin/dashboard");
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Đăng ký thất bại");
+    } catch (err: unknown) {
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "response" in err &&
+        typeof (err as { response?: { data?: { message?: string } } }).response?.data?.message === "string"
+      ) {
+        setError((err as { response: { data: { message: string } } }).response.data.message || "Đăng ký thất bại");
+      } else {
+        setError("Đăng ký thất bại");
+      }
     }
   };
 

@@ -9,9 +9,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { Product } from "@/data/products";
+import Image from "next/image";
 
 export default function ProductSection() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,17 +22,10 @@ export default function ProductSection() {
     const fetchData = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/products");
-        const data = res.data;
+        const data: Product[] = res.data;
         setProducts(data);
-
-        // Ép kiểu rõ ràng ở đây
-        const categoriesFromData: string[] = data.map(
-          (item: any) => item.category
-        );
-        const uniqueCategories: string[] = [
-          ...new Set<string>(categoriesFromData),
-        ];
-
+        const categoriesFromData: string[] = data.map((item: Product) => item.category);
+        const uniqueCategories: string[] = [...new Set<string>(categoriesFromData)];
         setCategories(uniqueCategories);
         setActiveCategory(uniqueCategories[0] || "");
       } catch (error) {
@@ -97,10 +92,13 @@ export default function ProductSection() {
           <div className="relative">
             <div className="absolute inset-0 bg-[#006c67] skew-x-[-12deg] origin-left z-0 rounded-md"></div>
 
-            <img
+            <Image
               src={product.image}
               alt={product.name}
               className="relative z-10 w-full h-auto object-contain ml-[-250px]"
+              width={600}
+              height={400}
+              priority
             />
 
             <div className="absolute top-6 right-6 z-20 text-white space-y-4">

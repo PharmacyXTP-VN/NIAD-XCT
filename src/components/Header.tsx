@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,10 +88,13 @@ export default function Header() {
           </div>
           {/* Logo center */}
           <Link href="/" className="flex-shrink-0">
-            <img
+            <Image
               src="/images/test2-removebg-preview.png"
               alt="KIA Logo"
               className="h-10 w-auto object-contain drop-shadow-lg"
+              width={120}
+              height={40}
+              priority
             />
           </Link>
           {/* Right side nav */}

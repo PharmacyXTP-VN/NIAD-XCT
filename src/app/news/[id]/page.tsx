@@ -6,16 +6,12 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 
-interface NewsDetailPageProps {
-  params: { id: string };
-}
-
 function getFirstImageSrc(html: string): string | null {
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return match ? match[1] : null;
 }
 
-export default function NewsDetailPage({ params }: NewsDetailPageProps) {
+export default function NewsDetailPage({ params }: { params: { id: string } }) {
   const news = newsList.find((n) => n.id === params.id);
 
   if (!news) {
