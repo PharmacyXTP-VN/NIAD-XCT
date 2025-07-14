@@ -9,29 +9,31 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <Image
-            src="/images/test2-removebg-preview.png"
-            alt="KIA Logo"
-            className="h-10 mb-4"
+            src="/images/logo-niad/logo-nias.png"
+            alt="NIAD Logo"
+            className="mb-4 w-[120px] h-[40px] object-contain"
             width={120}
             height={40}
           />
           <p className="text-sm text-gray-400">
-            KIA Việt Nam – Nơi bạn tìm thấy những mẫu xe hiện đại, an toàn và
-            đẳng cấp.
+            NIAD – Chuyên cung cấp xe chở tiền, xe vận chuyển tài sản, giải pháp an
+            ninh vận tải tài chính toàn diện.
           </p>
         </div>
         <div>
           <h3 className="text-white font-semibold mb-2">Liên hệ</h3>
-          <p className="text-sm">Hotline: 1900 545 545</p>
-          <p className="text-sm">Email: contact@kiavietnam.vn</p>
-          <p className="text-sm">Địa chỉ: 123 Đường KIA, Quận 1, TP.HCM</p>
+          <p className="text-sm">Hotline: 024 730 446 88</p>
+          <p className="text-sm">Email: hotro@nganluc.vn</p>
+          <p className="text-sm">
+            Địa chỉ: Số 8, ngõ 22, Đường Mỹ Đình, Nam Từ Liêm, Hà Nội
+          </p>
         </div>
         <div>
           <h3 className="text-white font-semibold mb-2">Liên kết nhanh</h3>
           <ul className="space-y-1 text-sm text-gray-400">
             <li>
               <a href="#models" className="hover:text-white">
-                Dòng xe
+                Sản phẩm
               </a>
             </li>
             <li>
@@ -41,7 +43,7 @@ export default function Footer() {
             </li>
             <li>
               <a href="#promo" className="hover:text-white">
-                Khuyến mãi
+                Ưu đãi
               </a>
             </li>
             <li>
@@ -53,7 +55,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="mt-8 border-t border-gray-700 pt-4 text-center text-sm text-gray-500">
-        © 2025 KIA Việt Nam. All rights reserved.
+        © 2025 NIAD. All rights reserved.
       </div>
     </footer>
   );

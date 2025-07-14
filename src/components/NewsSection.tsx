@@ -69,7 +69,7 @@ export default function NewsSection() {
   }, [slider]);
 
   return (
-    <section id="news" className="py-12 bg-white">
+    <section id="news-section" className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-2xl font-bold text-gray-800 mb-8">
           📰 Tin tức & Sự kiện
@@ -83,7 +83,7 @@ export default function NewsSection() {
               <Image
                 src={newsList[0].image}
                 alt={newsList[0].title}
-                className="w-full h-96 object-cover"
+                className="w-full h-96 object-contain bg-white"
                 width={800}
                 height={384}
                 priority
@@ -110,7 +110,7 @@ export default function NewsSection() {
                 <Image
                   src={news.image}
                   alt={news.title}
-                  className="w-full h-28 object-cover"
+                  className="w-full h-28 object-contain bg-white"
                   width={400}
                   height={112}
                 />

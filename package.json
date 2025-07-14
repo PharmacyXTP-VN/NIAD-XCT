@@ -1,7 +1,8 @@
 {
-  "name": "my-next-app",
+  "name": "niad-xe-cho-tien",
   "version": "0.1.0",
   "private": true,
+  "description": "Niad chuyên cung cấp xe chở tiền",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

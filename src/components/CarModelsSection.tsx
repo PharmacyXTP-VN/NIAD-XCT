@@ -74,9 +74,6 @@ export default function NewsSection() {
 	return (
 		<section id="news" className="py-12 bg-white">
 			<div className="max-w-7xl mx-auto px-4">
-				<h2 className="text-2xl font-bold text-gray-800 mb-8">
-					Sản Phẩm Mới
-				</h2>
 				<Slider {...settings}>
 					{newsList.map((news, index) => {
 						const isActive = index === currentSlide;
