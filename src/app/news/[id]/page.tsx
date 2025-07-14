@@ -6,17 +6,26 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 
+// Thêm kiểu dữ liệu cho params
+export async function generateStaticParams(): Promise<Array<{ id: string }>> {
+  return newsList.map((news) => ({
+    id: news.id,
+  }));
+}
+
 function getFirstImageSrc(html: string): string | null {
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return match ? match[1] : null;
 }
 
-export default async function NewsDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const news = newsList.find((n) => n.id === params.id);
+interface PageProps {
+  params?: Promise<{ id: string }>;
+  searchParams?: Promise<any>;
+}
+
+export default async function NewsDetailPage({ params }: PageProps) {
+  const resolvedParams = params ? await params : { id: "" };
+  const news = newsList.find((n) => n.id === resolvedParams.id);
 
   if (!news) {
     notFound();
