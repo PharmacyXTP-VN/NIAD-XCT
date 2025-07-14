@@ -11,11 +11,15 @@ function getFirstImageSrc(html: string): string | null {
   return match ? match[1] : null;
 }
 
-export default function NewsDetailPage({ params }: { params: { id: string } }) {
+export default async function NewsDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const news = newsList.find((n) => n.id === params.id);
 
   if (!news) {
-    return notFound();
+    notFound();
   }
 
   const imgSrc = getFirstImageSrc(news.content);
