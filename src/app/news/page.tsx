@@ -86,7 +86,9 @@ export default function NewsPage() {
 		<DefaultLayout>
 			{/* Banner lớn */}
 			<section className="relative bg-[#f5f7fa] py-8 border-b border-gray-200">
-				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 px-4">
+				{/* Lớp phủ màu xanh */}
+				<div className="absolute inset-0 bg-gradient-to-r from-[#17877b]/80 to-[#7ee8c7]/80 opacity-80 pointer-events-none z-0" />
+				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 px-4 relative z-10">
 					<div className="flex-1 flex flex-col justify-center">
 						<h1 className="text-4xl md:text-5xl font-extrabold text-[#222] mb-4 leading-tight uppercase drop-shadow-lg">
 							Vui hè sôi động, cùng Kia New Sonet
