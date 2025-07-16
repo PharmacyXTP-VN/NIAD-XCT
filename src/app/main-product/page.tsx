@@ -107,9 +107,15 @@ export default function MainProductsPage() {
 											))}
 										</ul>
 										<div className="mt-auto space-y-1">
-									<div className="text-xs text-red-600 font-semibold">{product.price}</div>
-									<div className="text-xs text-red-600 font-semibold">{product.rental}</div>
-								</div>
+											<div className="text-xs text-red-600 font-semibold">{product.price}</div>
+											<div className="text-xs text-red-600 font-semibold">{product.rental}</div>
+											<button
+												className="mt-3 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
+												onClick={() => window.location.href = "/product-detail"}
+											>
+												Chi tiết sản phẩm
+											</button>
+										</div>
 									</div>
 								</div>
 							))}

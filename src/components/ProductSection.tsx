@@ -146,7 +146,9 @@ export default function ProductSection() {
                 <h2 className="text-4xl font-bold uppercase text-[#03bb65] drop-shadow mb-2">{product.name}</h2>
                 <p className="text-gray-700 text-base mb-2">{product.desc}</p>
                 <p className="text-2xl font-bold text-[#006c67] mb-4">{product.price}</p>
-                <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow">
+                <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
+                  onClick={() => window.location.href = "/product-detail"}
+                >
                   Chi tiết sản phẩm
                 </button>
               </div>
