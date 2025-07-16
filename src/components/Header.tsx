@@ -15,124 +15,88 @@ export default function Header() {
 
   return (
     <>
-      {/* Gradient accent bar nằm ngoài header */}
-      <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200 w-full">
-        <div className="max-w-7xl mx-auto px-2 md:px-6 h-[64px] md:h-[80px] flex items-center justify-between gap-2 md:gap-10">
+      <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-6 h-[80px] flex items-center justify-between">
           {/* Navigation Split */}
-          <div className="hidden md:flex w-full items-center gap-10 text-base font-semibold tracking-widest uppercase text-black relative">
-            <div
-              className="flex-shrink-0 flex items-center justify-start"
-              style={{ minWidth: 120 }}
+          <div className="hidden md:flex flex-1 justify-start items-center gap-10 text-base font-semibold tracking-widest uppercase text-black relative">
+            <Link
+              href="/"
+              className="flex items-center hover:text-red-600 transition-colors duration-200 header-link mr-2"
             >
-              <Link href="/">
-                <Image
-                  src="/images/logo-niad/logo-nias.png"
-                  alt="Niad Logo"
-                  className="h-10 w-auto object-contain drop-shadow-lg"
-                  width={120}
-                  height={40}
-                  priority
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 mr-1"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 12l9-7 9 7M4.5 10.5V19a1.5 1.5 0 001.5 1.5h3A1.5 1.5 0 0010.5 19V15a1.5 1.5 0 011.5-1.5h0A1.5 1.5 0 0113.5 15v4a1.5 1.5 0 001.5 1.5h3A1.5 1.5 0 0020 19v-8.5"
                 />
-              </Link>
+              </svg>
+            </Link>
+            <Link
+              href="/about"
+              className="hover:text-red-600 transition-colors duration-200 header-link"
+            >
+              Về Chúng tôi
+            </Link>
+            <div
+              className="relative"
+            >
+              <button
+                className="hover:text-red-600 flex items-center gap-2 h-[80px] px-2 transition-colors duration-200 header-link"
+              >
+                SẢN PHẨM
+                
+              </button>
             </div>
-            <div className="flex-1 flex justify-end items-center gap-10">
-              <Link
-                href="#aboutCTA"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("aboutCTA");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
+          </div>
+          {/* Logo center */}
+          <Link href="/" className="flex-shrink-0">
+            <Image
+              src="/images/logo-niad/logo-nias.png"
+              width={100}
+              height={40}
+              alt="NIAD Logo"
+              className="h-10 w-auto object-contain drop-shadow-lg"
+            />
+          </Link>
+          {/* Right side nav */}
+          <div className="hidden md:flex flex-1 justify-end items-center gap-10 text-base font-semibold tracking-widest uppercase text-black">
+            <Link
+              href="/news"
+              className="hover:text-red-600 transition-colors duration-200 header-link"
+            >
+              Tin tức và ưu đãi
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-red-600 transition-colors duration-200 header-link"
+            >
+              Liên hệ
+            </Link>
+            <button
+              aria-label="Search"
+              className="ml-2 p-2 rounded-full hover:bg-red-50 transition-colors duration-200"
+            >
+              <svg
+                className="w-6 h-6 text-black"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
               >
-                Về NIAD
-              </Link>
-              <Link
-                href="#moneyTruckAccordion"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("moneyTruckAccordion");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
-              >
-                Ưu điểm vượt trội
-              </Link>
-              <Link
-                href="#main-products"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("main-products");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
-              >
-                Sản phẩm
-              </Link>
-              <Link
-                href="#follow-us"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("follow-us");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
-              >
-                Theo dõi
-              </Link>
-              <Link
-                href="#news-section"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("news-section");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
-              >
-                Tin tức
-              </Link>
-              <Link
-                href="#contact"
-                scroll={false}
-                className="hover:text-red-600 transition-colors duration-200 header-link"
-                onClick={e => {
-                  e.preventDefault();
-                  const section = document.getElementById("contact");
-                  if (section) {
-                    const y =
-                      section.getBoundingClientRect().top + window.pageYOffset;
-                    window.scrollTo({ top: y, behavior: "smooth" });
-                  }
-                }}
-              >
-                Liên hệ
-              </Link>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
+                />
+              </svg>
+            </button>
           </div>
           {/* Mobile button */}
           <button
@@ -165,101 +129,22 @@ export default function Header() {
         </div>
         {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden bg-white px-2 pb-6 pt-2 space-y-2 text-base font-semibold tracking-widest uppercase text-black shadow-xl animate-fadeIn">
-            <Link
-              href="#aboutCTA"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("aboutCTA");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
-              Về NIAD
+          <div className="md:hidden bg-white px-6 pb-6 pt-2 space-y-4 text-base font-semibold tracking-widest uppercase text-black shadow-xl animate-fadeIn">
+            <Link href="/about" className="mobile-link">
+              Về Kia
             </Link>
-            <Link
-              href="#moneyTruckAccordion"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("moneyTruckAccordion");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
-              Ưu điểm vượt trội
+            <div>
+              <button
+                className="flex items-center justify-between w-full mobile-link"
+              >
+                Sản phẩm
+                
+              </button>
+            </div>
+            <Link href="/news" className="mobile-link">
+              Tin tức và ưu đãi
             </Link>
-            <Link
-              href="#main-products"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("main-products");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
-              Sản phẩm
-            </Link>
-            <Link
-              href="#follow-us"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("follow-us");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
-              Theo dõi
-            </Link>
-            <Link
-              href="#news-section"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("news-section");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
-              Tin tức
-            </Link>
-            <Link
-              href="#contact"
-              scroll={false}
-              className="mobile-link block py-3 px-2 rounded hover:bg-gray-100 transition"
-              onClick={e => {
-                e.preventDefault();
-                setIsOpen(false);
-                const section = document.getElementById("contact");
-                if (section) {
-                  const y = section.getBoundingClientRect().top + window.pageYOffset;
-                  window.scrollTo({ top: y, behavior: "smooth" });
-                }
-              }}
-            >
+            <Link href="/contact" className="mobile-link">
               Liên hệ
             </Link>
           </div>

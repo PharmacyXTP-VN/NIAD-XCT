@@ -183,6 +183,8 @@ export type Product = {
   category: string;
   price: string;
   image: string;
+  brand: string;
+  active?: boolean;
   desc: string;
   seats: string;
   transmission: string;

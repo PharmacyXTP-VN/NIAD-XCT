@@ -3,7 +3,7 @@ import { Mail, Facebook, Youtube, Phone } from "lucide-react";
 
 export default function FollowUs() {
   return (
-    <section id="follow-us" className="w-full bg-[#0a1a2f]/80 py-16 px-2 md:px-0 relative py-16 bg-cover bg-center"
+    <section id="follow-us" className="w-full bg-[#1a1a2e] py-16 px-2 md:px-0 relative py-16 bg-cover bg-center"
 			style={{
 				backgroundImage: "url('/images/bg-section/bg-section.png')",
 			}}>

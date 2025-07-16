@@ -43,7 +43,7 @@ export default function AboutCTA() {
 	return (
 		<section
 			id="aboutCTA"
-			className="relative py-16 bg-cover bg-center"
+			className="relative py-16 bg-[#1a1a2e] bg-center"
 			style={{
 				backgroundImage: "url('/images/bg-section/bg-section.png')",
 			}}
@@ -52,14 +52,15 @@ export default function AboutCTA() {
 			<div className="relative max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 px-4">
 				{/* Left */}
 				<div className="flex-1 text-left mb-8 md:mb-0">
-					<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
+					<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-[#03bb65]">
 						Tại sao chọn{" "}
 						<span className="text-white">
 							<span className="text-white">NIAD</span>?
 						</span>
 					</h2>
 					<div className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 text-white">
-						ĐỐI TÁC UY TÍN DỊCH VỤ NGÂN HÀNG
+						ĐỐI TÁC UY TÍN{" "}
+						<span className="text-[#03bb65]">DỊCH VỤ NGÂN HÀNG</span>
 					</div>
 					<div className="italic text-gray-300 mb-6 text-base sm:text-lg">
 						“Chúng tôi cung cấp dịch vụ dựa trên kinh nghiệm thực tế và năng

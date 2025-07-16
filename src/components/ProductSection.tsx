@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Product } from "@/data/products";
+import { Product, products as productData } from "@/data/products";
 import Image from "next/image";
 
 export default function ProductSection() {
@@ -16,83 +16,29 @@ export default function ProductSection() {
   const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [activeBrand, setActiveBrand] = useState<string>("");
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await axios.get("http://localhost:5000/api/products");
-  //       const data: Product[] = res.data;
-  //       setProducts(data);
-  //       const categoriesFromData: string[] = data.map((item: Product) => item.category);
-  //       const uniqueCategories: string[] = [...new Set<string>(categoriesFromData)];
-  //       setCategories(uniqueCategories);
-  //       setActiveCategory(uniqueCategories[0] || "");
-  //     } catch (error) {
-  //       console.error("Lỗi khi tải sản phẩm:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
-  // Mock data cho demo local, bỏ comment để dùng thử:
   useEffect(() => {
-    // Dữ liệu mẫu
-    // Định nghĩa Product mở rộng cho mock local
-    type ProductMock = Product & { active?: boolean };
-    const mockProducts: ProductMock[] = [
-      {
-        id: 1,
-        name: "Xe chở tiền Isuzu D-Max",
-        desc: "Xe bán tải Isuzu D-Max cải tiến thành xe chở tiền chuyên dụng, thùng bảo vệ an toàn, nội thất tiện nghi.",
-        price: "1.200.000.000đ",
-        image: "/images/cars/test2-removebg-preview.png",
-        category: "Bán tải",
-        fuel: "Diesel",
-        transmission: "Số tự động",
-        seats: "5",
-        active: false,
-      },
-      {
-        id: 2,
-        name: "Xe chở tiền Ford Transit",
-        desc: "Xe van Ford Transit cải tiến, khoang chứa tiền rộng, hệ thống an ninh hiện đại.",
-        price: "1.500.000.000đ",
-        image: "/images/test3.png",
-        category: "Van",
-        fuel: "Diesel",
-        transmission: "Số sàn",
-        seats: "7",
-        active: false,
-      },
-      {
-        id: 3,
-        name: "Xe chở tiền Toyota Innova",
-        desc: "Xe 7 chỗ Toyota Innova cải tiến, phù hợp vận chuyển tiền mặt an toàn.",
-        price: "1.350.000.000đ",
-        image: "/images/tesst-removebg-preview.png",
-        category: "7 chỗ",
-        fuel: "Xăng",
-        transmission: "Số tự động",
-        seats: "7",
-        active: true,
-      },
-    ];
-    setProducts(mockProducts);
-    const categoriesFromData: string[] = mockProducts.map((item) => item.category);
-    const uniqueCategories: string[] = [...new Set<string>(categoriesFromData)];
+    // Chuyển category thành hãng xe, name thành loại xe
+    const productsWithBrand = productData.map((p) => ({ ...p, brand: p.name }));
+    setProducts(productsWithBrand);
+    // Lấy danh sách hãng xe
+    const brandsFromData: string[] = productData.map((item) => item.category);
+    const uniqueBrands: string[] = [...new Set<string>(brandsFromData)].filter(Boolean);
+    setBrands(uniqueBrands);
+    setActiveBrand(uniqueBrands[0] || "");
+    // Lấy danh sách loại xe theo hãng
+    const categoriesFromData: string[] = productData.filter((item) => item.category === (uniqueBrands[0] || "")).map((item) => item.name);
+    const uniqueCategories: string[] = [...new Set<string>(categoriesFromData)].filter(Boolean);
     setCategories(uniqueCategories);
-    // Nếu có sản phẩm active thì set category và index theo sản phẩm đó
-    const activeProduct = mockProducts.find((p) => p.active);
-    if (activeProduct) {
-      setActiveCategory(activeProduct.category);
-      setCurrentIndex(mockProducts.filter((p) => p.category === activeProduct.category).findIndex((p) => p.active));
-    } else {
-      setActiveCategory(uniqueCategories[0] || "");
-      setCurrentIndex(0);
-    }
+    // Không dùng activeProduct nữa, chỉ khởi tạo mặc định
+    setActiveCategory(uniqueCategories[0] || "");
+    setCurrentIndex(0);
   }, []);
 
-  const filtered = products.filter((p) => p.category === activeCategory);
+  // Filter theo hãng xe và loại xe
+  const filtered = products.filter((p) => p.category === activeBrand && p.brand === activeCategory);
   const total = filtered.length;
   const product = total > 0 ? filtered[currentIndex] : null;
 
@@ -105,36 +51,89 @@ export default function ProductSection() {
   };
 
   return (
-    <section id="main-products" className="w-full bg-[#0a1a2f]/80 px-0 py-3">
-      <h2 className="text-center font-bold text-4xl md:text-5xl text-white mb-8 tracking-tight drop-shadow-lg">SẢN PHẨM</h2>
+    <section id="main-products" className="w-full bg-[#1a1a2e] px-0 py-3 pb-8"
+    style={{
+        backgroundImage: "url('/images/bg-section/bg-section.png')",
+      }}
+    >
+      <h2 className="text-center font-bold text-4xl md:text-5xl text-white mb-4 mt-8 tracking-tight drop-shadow-lg">SẢN PHẨM</h2>
+      {/* Filter hãng xe */}
+          <div className="flex justify-center mb-6">
+            <div className="flex bg-white/80 shadow rounded-full px-2 py-2 gap-2 border border-[#1787d6]">
+              {brands.map((brand) => (
+                <button
+                  key={brand}
+                  onClick={() => {
+                    setActiveBrand(brand);
+                    // Khi đổi hãng xe, cập nhật lại loại xe
+                    const filteredCategories = products.filter((p) => p.category === brand).map((p) => p.brand);
+                    const uniqueFilteredCategories = [...new Set<string>(filteredCategories)];
+                    setCategories(uniqueFilteredCategories);
+                    setActiveCategory(uniqueFilteredCategories[0] || "");
+                    setCurrentIndex(0);
+                  }}
+                  className={`px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 ${
+                    activeBrand === brand
+                      ? "text-[#1787d6] border-[#1787d6] bg-[#e6f9f0]"
+                      : "text-gray-700 border-transparent hover:text-[#1787d6] hover:bg-[#e6f9f0]"
+                  }`}
+                >
+                  {brand}
+                </button>
+              ))}
+            </div>
+          </div>
       <div className="max-w-7xl mx-auto px-4">
         <div className="bg-white/90 rounded-3xl shadow-2xl border-2 border-[#03bb65] p-8 md:p-12 relative overflow-hidden">
-          {/* Decoration shape */}
-          <div className="absolute left-0 bottom-0 w-40 h-20 bg-[#e6f9f0] rounded-t-full -z-10" />
-          <div className="absolute right-0 top-0 w-32 h-32 bg-[#d0e6ff] rounded-br-[80px] -z-10" />
+
           {/* Tabs */}
           <div className="flex justify-center mb-8">
-            <div className="flex bg-white/80 shadow rounded-full px-2 py-2 gap-2 border border-[#03bb65]">
-              {categories.map((cat) => {
-                const count = products.filter((p) => p.category === cat).length;
-                const isActive = activeCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => {
-                      setActiveCategory(cat);
-                      setCurrentIndex(0);
-                    }}
-                    className={`px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 ${
-                      isActive
-                        ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
-                        : "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
-                    }`}
-                  >
-                    {cat} ({count})
-                  </button>
-                );
-              })}
+            {/* Thanh trượt filter loại xe trên mobile, giữ nguyên trên md+ */}
+            <div className="w-full">
+              <div className="flex md:hidden overflow-x-auto no-scrollbar gap-2 pb-1">
+                {categories.map((cat) => {
+                  const count = products.filter((p) => p.brand === cat).length;
+                  const isActive = activeCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setActiveCategory(cat);
+                        setCurrentIndex(0);
+                      }}
+                      className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
+                        isActive
+                          ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
+                          : "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
+                      }`}
+                    >
+                      {cat} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="hidden md:flex bg-white/80 shadow rounded-full px-2 py-2 gap-2 border border-[#03bb65]">
+                {categories.map((cat) => {
+                  const count = products.filter((p) => p.brand === cat).length;
+                  const isActive = activeCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => {
+                        setActiveCategory(cat);
+                        setCurrentIndex(0);
+                      }}
+                      className={`px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 ${
+                        isActive
+                          ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
+                          : "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
+                      }`}
+                    >
+                      {cat} ({count})
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -147,7 +146,7 @@ export default function ProductSection() {
                 <p className="text-gray-700 text-base mb-2">{product.desc}</p>
                 <p className="text-2xl font-bold text-[#006c67] mb-4">{product.price}</p>
                 <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow">
-                  Xem tất cả
+                  Chi tiết sản phẩm
                 </button>
               </div>
 
