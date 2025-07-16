@@ -2,6 +2,12 @@
 
 import DefaultLayout from "@/layout/DefaultLayout";
 import Image from "next/image";
+import { useState } from "react";
+import TabDacDiemNoiBat from "@/components/product-detail/TabDacDiemNoiBat";
+import TabNgoaiThat from "@/components/product-detail/TabNgoaiThat";
+import TabNoiThat from "@/components/product-detail/TabNoiThat";
+import TabVanHanh from "@/components/product-detail/TabVanHanh";
+import TabAnToan from "@/components/product-detail/TabAnToan";
 
 const product = {
   name: "New Carnival 2.2D Luxury",
@@ -61,6 +67,17 @@ const product = {
 };
 
 export default function ProductDetailPage() {
+  const tabList = [
+    "Đặc điểm nổi bật",
+    "Ngoại thất",
+    "Nội thất",
+    "Vận hành",
+    "An toàn",
+    "Thông số kỹ thuật",
+    "Hình ảnh",
+  ];
+  const [activeTab, setActiveTab] = useState(tabList[0]);
+
   return (
     <DefaultLayout>
       {/* Banner */}
@@ -75,6 +92,26 @@ export default function ProductDetailPage() {
           </p>
         </div>
       </section>
+      {/* Tabs điều hướng đặt dưới banner */}
+      <div className="w-full bg-white/90 py-4 shadow-sm sticky top-0 z-30">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="flex flex-wrap gap-2 md:gap-4 justify-center bg-white/80 rounded-full shadow px-2 py-2 border border-[#03bb65]">
+            {tabList.map(tab => (
+              <button
+                key={tab}
+                className={`px-4 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
+                  activeTab === tab
+                    ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
+                    : "text-[#03bb65] border-transparent hover:border-[#03bb65] hover:bg-[#e6f9f0]"
+                }`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
       <div className="min-h-screen bg-[#f0f2f5]">
         {/* Gallery & Main Info */}
         <section className="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-10">
@@ -109,36 +146,13 @@ export default function ProductDetailPage() {
             <button className="mt-4 px-8 py-3 bg-[#03bb65] text-white rounded-xl hover:bg-[#006c67] transition font-bold shadow text-lg w-fit">Đặt xe ngay</button>
           </div>
         </section>
-        {/* Highlights */}
-        <section className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 flex flex-col gap-4">
-            <h3 className="text-2xl font-bold text-[#03bb65] mb-2">Ngoại thất đẳng cấp</h3>
-            <ul className="list-disc pl-5 text-[#1d1d1f] space-y-1">
-              {product.highlights.map((h, idx) => <li key={idx}>{h}</li>)}
-            </ul>
-          </div>
-          <div className="bg-white rounded-3xl shadow-2xl p-8 flex flex-col gap-4">
-            <h3 className="text-2xl font-bold text-[#03bb65] mb-2">Nội thất</h3>
-            <ul className="list-disc pl-5 text-[#1d1d1f] space-y-1">
-              {product.interior.map((h, idx) => <li key={idx}>{h}</li>)}
-            </ul>
-          </div>
-        </section>
-        {/* Performance & Safety */}
-        <section className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 flex flex-col gap-4">
-            <h3 className="text-2xl font-bold text-[#03bb65] mb-2">Vận hành</h3>
-            <ul className="list-disc pl-5 text-[#1d1d1f] space-y-1">
-              {product.performance.map((h, idx) => <li key={idx}>{h}</li>)}
-            </ul>
-          </div>
-          <div className="bg-white rounded-3xl shadow-2xl p-8 flex flex-col gap-4">
-            <h3 className="text-2xl font-bold text-[#03bb65] mb-2">An toàn & Hỗ trợ</h3>
-            <ul className="list-disc pl-5 text-[#1d1d1f] space-y-1">
-              {product.safety.map((h, idx) => <li key={idx}>{h}</li>)}
-            </ul>
-          </div>
-        </section>
+        {/* Tab nội dung động */}
+        {activeTab === "Đặc điểm nổi bật" && <TabDacDiemNoiBat product={product} />}
+        {activeTab === "Ngoại thất" && <TabNgoaiThat product={product} />}
+        {activeTab === "Nội thất" && <TabNoiThat product={product} />}
+        {activeTab === "Vận hành" && <TabVanHanh product={product} />}
+        {activeTab === "An toàn" && <TabAnToan product={product} />}
+        {/* Các tab khác có thể bổ sung sau */}
         {/* Versions */}
         <section className="max-w-7xl mx-auto px-4 py-12">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-[#03bb65] mb-8 drop-shadow-lg">Đặt xe trực tuyến<br /><span className="text-[#1d1d1f] text-2xl font-semibold">Vui lòng chọn phiên bản</span></h2>
