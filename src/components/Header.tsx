@@ -23,20 +23,7 @@ export default function Header() {
               href="/"
               className="flex items-center hover:text-red-600 transition-colors duration-200 header-link mr-2"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6 mr-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 12l9-7 9 7M4.5 10.5V19a1.5 1.5 0 001.5 1.5h3A1.5 1.5 0 0010.5 19V15a1.5 1.5 0 011.5-1.5h0A1.5 1.5 0 0113.5 15v4a1.5 1.5 0 001.5 1.5h3A1.5 1.5 0 0020 19v-8.5"
-                />
-              </svg>
+              Trang Chủ
             </Link>
             <Link
               href="/about"
@@ -44,7 +31,8 @@ export default function Header() {
             >
               Về Chúng tôi
             </Link>
-            <div
+            <Link
+            href="/main-product"
               className="relative"
             >
               <button
@@ -53,7 +41,7 @@ export default function Header() {
                 SẢN PHẨM
                 
               </button>
-            </div>
+            </Link>
           </div>
           {/* Logo center */}
           <Link href="/" className="flex-shrink-0">
@@ -100,10 +88,11 @@ export default function Header() {
           </div>
           {/* Mobile button */}
           <button
-            className="md:hidden p-2 rounded-lg border border-gray-200 bg-white shadow-sm"
+            className="md:hidden p-2 rounded-lg border border-gray-200 bg-white shadow-sm flex items-center gap-2 font-semibold uppercase text-base tracking-widest text-black"
             onClick={toggleMenu}
             aria-label="Toggle Menu"
           >
+            <span className="hidden xs:inline">Menu</span>
             <svg
               className="h-7 w-7 text-black"
               fill="none"
@@ -129,24 +118,38 @@ export default function Header() {
         </div>
         {/* Mobile menu */}
         {isOpen && (
-          <div className="md:hidden bg-white px-6 pb-6 pt-2 space-y-4 text-base font-semibold tracking-widest uppercase text-black shadow-xl animate-fadeIn">
-            <Link href="/about" className="mobile-link">
-              Về Kia
+          <div className="md:hidden bg-white px-6 pb-6 pt-2 space-y-2 text-base font-semibold tracking-widest uppercase text-black shadow-xl animate-fadeIn flex flex-col">
+            <Link href="/" className="mobile-link flex items-center py-3 border-b border-gray-100">
+              Trang Chủ
             </Link>
-            <div>
-              <button
-                className="flex items-center justify-between w-full mobile-link"
-              >
-                Sản phẩm
-                
-              </button>
-            </div>
-            <Link href="/news" className="mobile-link">
+            <Link href="/about" className="mobile-link flex items-center py-3 border-b border-gray-100">
+              Về Chúng tôi
+            </Link>
+            <Link href="/news" className="mobile-link flex items-center py-3 border-b border-gray-100">
               Tin tức và ưu đãi
             </Link>
-            <Link href="/contact" className="mobile-link">
+            <Link href="/contact" className="mobile-link flex items-center py-3 border-b border-gray-100">
               Liên hệ
             </Link>
+            <button
+              className="flex items-center gap-2 py-3 w-full text-left border-b border-gray-100 mobile-link"
+              aria-label="Tìm kiếm"
+            >
+              <svg
+                className="w-6 h-6 text-black"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z"
+                />
+              </svg>
+              <span>Tìm kiếm</span>
+            </button>
           </div>
         )}
       </header>

@@ -41,31 +41,30 @@ const aboutStats = [
 
 export default function AboutCTA() {
 	return (
-		<section
-			id="aboutCTA"
-			className="relative py-16 bg-[#1a1a2e] bg-center"
-			style={{
-				backgroundImage: "url('/images/bg-section/bg-section.png')",
-			}}
-		>
-			<div className="absolute inset-0 bg-[#0a1a2f]/80 pointer-events-none" />
+		<section className="relative py-16 bg-[#f0f2f5]">
 			<div className="relative max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 px-4">
 				{/* Left */}
 				<div className="flex-1 text-left mb-8 md:mb-0">
 					<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-[#03bb65]">
 						Tại sao chọn{" "}
-						<span className="text-white">
-							<span className="text-white">NIAD</span>?
+						<span className="text-[#1d1d1f]">
+							<span className="text-[#1d1d1f]">NIAD</span>?
 						</span>
 					</h2>
-					<div className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 text-white">
+					<div className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 text-[#1d1d1f]">
 						ĐỐI TÁC UY TÍN{" "}
 						<span className="text-[#03bb65]">DỊCH VỤ NGÂN HÀNG</span>
 					</div>
-					<div className="italic text-gray-300 mb-6 text-base sm:text-lg">
+					<div className="italic text-[#6e6e73] mb-6 text-base sm:text-lg">
 						“Chúng tôi cung cấp dịch vụ dựa trên kinh nghiệm thực tế và năng
 						lực tài chính vững mạnh. Bạn đang ở đúng nơi cần lựa chọn.”
 					</div>
+					<a
+						href="/about"
+						className="inline-block px-6 py-2 bg-[#03bb65] text-white rounded-lg font-semibold shadow hover:bg-[#029e54] transition mb-4"
+					>
+						Xem thêm
+					</a>
 				</div>
 				{/* Right */}
 				<div className="flex-1 flex flex-col gap-6">
@@ -81,10 +80,10 @@ export default function AboutCTA() {
 								<span className="font-bold text-[#03bb65] text-xl mr-2">
 									{stat.highlight}
 								</span>
-								<span className="font-semibold text-[#222] text-lg">
+								<span className="font-semibold text-[#1d1d1f] text-lg">
 									{stat.title}
 								</span>
-								<div className="text-gray-600 text-base mt-1">
+								<div className="text-[#6e6e73] text-base mt-1">
 									{stat.desc}
 								</div>
 							</div>

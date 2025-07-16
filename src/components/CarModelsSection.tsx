@@ -106,17 +106,14 @@ export default function XeChoTienSection() {
 	};
 
 	return (
-		<section id="xe-cho-tien" className="py-16 bg-[#1a1a2e]"
-		style={{
-				backgroundImage: "url('/images/bg-section/bg-section.png')",
-			}}
+		<section id="xe-cho-tien" className="py-16 bg-[#f0f2f5]"
 		>
 			<div className="max-w-7xl mx-auto px-4">
 				<h2 className="text-center font-extrabold text-3xl md:text-5xl mb-2 tracking-tight drop-shadow-lg leading-tight">
-					<span className="text-white">ƯU ĐIỂM</span>
+					<span className="text-[#1d1d1f]">ƯU ĐIỂM</span>
 					<span className="text-[#03bb65]"> VƯỢT TRỘI</span>
 				</h2>
-				<p className="text-center text-white/80 text-base md:text-lg mb-8 font-medium max-w-2xl mx-auto">
+				<p className="text-center text-[#6e6e73] text-base md:text-lg mb-8 font-medium max-w-2xl mx-auto">
 					Những lý do khiến xe chở tiền NIAD là lựa chọn hàng đầu cho ngân hàng và doanh nghiệp vận chuyển giá trị cao.
 				</p>
 				<Slider {...settings}>
@@ -124,9 +121,9 @@ export default function XeChoTienSection() {
 						<div key={idx} className="px-2">
 							<div
 								className={clsx(
-									"group relative overflow-hidden rounded-3xl shadow-2xl border-2 border-[#03bb65] transition-all duration-500",
+									"group relative overflow-hidden rounded-3xl shadow-2xl transition-all duration-500",
 									idx === currentSlide
-										? "bg-white scale-105 shadow-xl"
+										? "bg-white shadow-xl"
 										: "bg-gray-100 scale-95 opacity-60"
 								)}
 							>
@@ -134,7 +131,7 @@ export default function XeChoTienSection() {
 									<Image
 										src={img}
 										alt={`Xe chở tiền ${idx + 1}`}
-										className="object-contain rounded-2xl drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
+										className="object-contain rounded-2xl drop-shadow-xl transition-transform duration-500 group-hover:scale-105"
 										width={320}
 										height={220}
 										priority={idx === 0}

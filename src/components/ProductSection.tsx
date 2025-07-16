@@ -51,15 +51,16 @@ export default function ProductSection() {
   };
 
   return (
-    <section id="main-products" className="w-full bg-[#1a1a2e] px-0 py-3 pb-8"
-    style={{
-        backgroundImage: "url('/images/bg-section/bg-section.png')",
-      }}
-    >
-      <h2 className="text-center font-bold text-4xl md:text-5xl text-white mb-4 mt-8 tracking-tight drop-shadow-lg">SẢN PHẨM</h2>
-      {/* Filter hãng xe */}
-          <div className="flex justify-center mb-6">
-            <div className="flex bg-white/80 shadow rounded-full px-2 py-2 gap-2 border border-[#1787d6]">
+    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 mt-8 gap-4">
+          <h2 className="font-bold text-4xl md:text-5xl text-[#1d1d1f] tracking-tight drop-shadow-lg text-left mb-0">
+            XE CHỞ TIỀN
+            <span className="text-[#03bb65]"> NIAD </span>
+          </h2>
+          {/* Filter hãng xe */}
+          <div className="flex justify-start md:justify-end w-full md:w-auto">
+            <div className="flex bg-white/80 shadow rounded-full px-2 py-2 gap-2">
               {brands.map((brand) => (
                 <button
                   key={brand}
@@ -74,8 +75,8 @@ export default function ProductSection() {
                   }}
                   className={`px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 ${
                     activeBrand === brand
-                      ? "text-[#1787d6] border-[#1787d6] bg-[#e6f9f0]"
-                      : "text-gray-700 border-transparent hover:text-[#1787d6] hover:bg-[#e6f9f0]"
+                      ? "text-[#6e6e73] border-[#6e6e73] bg-[#e6f9f0]"
+                      : "text-gray-700 border-transparent hover:text-[#6e6e73] hover:bg-[#e6f9f0]"
                   }`}
                 >
                   {brand}
@@ -83,8 +84,8 @@ export default function ProductSection() {
               ))}
             </div>
           </div>
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="bg-white/90 rounded-3xl shadow-2xl border-2 border-[#03bb65] p-8 md:p-12 relative overflow-hidden">
+        </div>
+        <div className="bg-white/90 rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
 
           {/* Tabs */}
           <div className="flex justify-center mb-8">
