@@ -3,6 +3,7 @@
 import DefaultLayout from "@/layout/DefaultLayout";
 import Image from "next/image";
 import { MapPinIcon, Cog6ToothIcon, BoltIcon } from "@heroicons/react/24/outline";
+import { useState, useEffect } from "react";
 
 const products = [
 	{
@@ -60,10 +61,40 @@ const products = [
 ];
 
 export default function MainProductsPage() {
+	// State cho filter hãng xe và loại xe
+	const [brands, setBrands] = useState<string[]>([]);
+	const [activeBrand, setActiveBrand] = useState<string>("");
+	const [categories, setCategories] = useState<string[]>([]);
+	const [activeCategory, setActiveCategory] = useState<string>("");
+	const [filteredProducts, setFilteredProducts] = useState(products);
+
+	useEffect(() => {
+		// Lấy danh sách hãng xe (giả sử hãng xe là phần đầu tiên của tên sản phẩm)
+		const brandsFromData = products.map((p) => p.name.split(" ")[3] || p.name.split(" ")[0]);
+		const uniqueBrands = [...new Set(brandsFromData)].filter(Boolean);
+		setBrands(uniqueBrands);
+		setActiveBrand(uniqueBrands[0] || "");
+	}, []);
+
+	useEffect(() => {
+		// Lấy danh sách loại xe theo hãng (giả sử loại xe là tên sản phẩm)
+		const categoriesFromData = products.filter((p) => p.name.includes(activeBrand)).map((p) => p.name);
+		setCategories(categoriesFromData);
+		setActiveCategory(categoriesFromData[0] || "");
+	}, [activeBrand]);
+
+	useEffect(() => {
+		// Lọc sản phẩm theo hãng và loại xe
+		const filtered = products.filter(
+			(p) => p.name.includes(activeBrand) && (activeCategory ? p.name === activeCategory : true)
+		);
+		setFilteredProducts(filtered);
+	}, [activeBrand, activeCategory]);
+
 	return (
 		<DefaultLayout>
 			<div className="min-h-screen bg-gradient-to-b from-[#1a1a1a] via-[#2d2d2d] to-[#f8f8f8] pb-12">
-				<section className="relative bg-gradient-to-r from-[#17877b] to-[#7ee8c7] text-white py-20 overflow-hidden mb-0">
+				<section className="relative bg-gradient-to-r from-[#17877b] to-[#7ee8c7] text-white py-20 overflow-hidden mb-0" style={{ borderBottom: 'none' }}>
 					<div className="absolute inset-0 opacity-20 bg-[url('/images/cars/test2-removebg-preview.png')] bg-no-repeat bg-right bg-contain pointer-events-none" />
 					<div className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center">
 						<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-lg uppercase">
@@ -75,10 +106,52 @@ export default function MainProductsPage() {
 					</div>
 				</section>
 				<div className="min-h-screen bg-[#f0f2f5]">
+					{/* Filter hãng xe */}
+					<div className="flex flex-col items-center justify-center mb-8 mt-0 pt-10">
+						<div className="bg-gradient-to-r from-[#e6f9f0] via-white to-[#e6f9f0] shadow-none rounded-full px-4 py-4 border-2 border-[#03bb65] flex flex-wrap gap-4 justify-center items-center min-h-[64px]">
+							{brands.map((brand) => (
+								<button
+									key={brand}
+									onClick={() => setActiveBrand(brand)}
+									className={`px-8 py-3 rounded-full font-bold text-lg transition-all border-2 shadow-md duration-200 focus:outline-none focus:ring-2 focus:ring-[#03bb65] focus:ring-offset-2 ${
+										activeBrand === brand
+											? "text-white bg-[#03bb65] border-[#03bb65] scale-105 drop-shadow-lg"
+											: "text-[#03bb65] bg-white border-[#03bb65] hover:bg-[#e6f9f0] hover:scale-105"
+									}`}
+									style={{ minWidth: 120 }}
+								>
+									{brand}
+								</button>
+							))}
+						</div>
+					</div>
+					{/* Filter loại xe (sản phẩm) */}
+					<div className="flex justify-center mb-8">
+						<div className="w-full max-w-2xl">
+							<div className="flex overflow-x-auto no-scrollbar gap-2 pb-1">
+								{categories.map((cat) => {
+									const isActive = activeCategory === cat;
+									return (
+										<button
+											key={cat}
+											onClick={() => setActiveCategory(cat)}
+											className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
+												isActive
+													? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
+													: "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
+											}`}
+										>
+											{cat}
+										</button>
+									);
+								})}
+							</div>
+						</div>
+					</div>
 					{/* Products Grid */}
 					<section className="max-w-7xl mx-auto px-4 py-16">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-							{products.map((product) => (
+							{filteredProducts.map((product) => (
 								<div
 									key={product.id}
 									className="bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col md:flex-row items-center p-8 gap-8 group hover:shadow-3xl transition-shadow duration-300"
@@ -132,10 +205,10 @@ export default function MainProductsPage() {
 								Trang sau
 							</button>
 							<button className="px-4 h-9 flex items-center justify-center rounded-full bg-white border-2 border-gray-200 text-gray-700 font-semibold shadow hover:bg-gray-100 transition-colors duration-200">
-								End
+								Kết thúc
 							</button>
 						</div>
-						<div className="text-center text-xs text-gray-500 mt-2">Page 1 of 2</div>
+						<div className="text-center text-xs text-gray-500 mt-2">Trang 1 của 2</div>
 					</section>
 				</div>
 			</div>

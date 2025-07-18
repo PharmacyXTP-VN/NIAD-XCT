@@ -69,10 +69,6 @@ const product = {
 export default function ProductDetailPage() {
   const tabList = [
     "Đặc điểm nổi bật",
-    "Ngoại thất",
-    "Nội thất",
-    "Vận hành",
-    "An toàn",
     "Thông số kỹ thuật",
     "Hình ảnh",
   ];
@@ -95,11 +91,11 @@ export default function ProductDetailPage() {
       {/* Tabs điều hướng đặt dưới banner */}
       <div className="w-full bg-white/90 py-4 shadow-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="flex flex-wrap gap-2 md:gap-4 justify-center bg-white/80 rounded-full shadow px-2 py-2 border border-[#03bb65]">
+          <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-4 justify-center bg-white/80 rounded-full px-2 py-2 border border-[#03bb65]">
             {tabList.map(tab => (
               <button
                 key={tab}
-                className={`px-4 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
+                className={`flex-shrink-0 px-4 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
                   activeTab === tab
                     ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
                     : "text-[#03bb65] border-transparent hover:border-[#03bb65] hover:bg-[#e6f9f0]"
@@ -171,6 +167,18 @@ export default function ProductDetailPage() {
           </div>
         </section>
       </div>
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .tablist-scroll {
+            overflow-x: auto !important;
+            flex-wrap: nowrap !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .tablist-scroll::-webkit-scrollbar {
+            display: none;
+          }
+        }
+      `}</style>
     </DefaultLayout>
   );
 }
