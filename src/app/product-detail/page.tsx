@@ -46,32 +46,40 @@ const product = {
     {
       name: "New Carnival 2.2D Luxury 8S",
       price: "1.299.000.000 VNĐ",
-      highlights: ["Ngoại thất: Đèn LED, Mâm 19 inch", "Nội thất: Ghế da, điều hòa tự động 3 vùng"],
+      highlights: [
+        "Ngoại thất: Đèn LED, Mâm 19 inch",
+        "Nội thất: Ghế da, điều hòa tự động 3 vùng",
+      ],
     },
     {
       name: "New Carnival 2.2D Premium 7S",
       price: "1.479.000.000 VNĐ",
-      highlights: ["Ngoại thất: Đèn LED, Mâm 19 inch", "Nội thất: Ghế da, điều hòa tự động 3 vùng"],
+      highlights: [
+        "Ngoại thất: Đèn LED, Mâm 19 inch",
+        "Nội thất: Ghế da, điều hòa tự động 3 vùng",
+      ],
     },
     {
       name: "New Carnival 2.2D Premium 8S",
       price: "1.519.000.000 VNĐ",
-      highlights: ["Ngoại thất: Đèn LED, Mâm 19 inch", "Nội thất: Ghế da, điều hòa tự động 3 vùng"],
+      highlights: [
+        "Ngoại thất: Đèn LED, Mâm 19 inch",
+        "Nội thất: Ghế da, điều hòa tự động 3 vùng",
+      ],
     },
     {
       name: "New Carnival 2.2D Signature 7S",
       price: "1.589.000.000 VNĐ",
-      highlights: ["Ngoại thất: Đèn LED, Mâm 19 inch", "Nội thất: Ghế da, điều hòa tự động 3 vùng"],
+      highlights: [
+        "Ngoại thất: Đèn LED, Mâm 19 inch",
+        "Nội thất: Ghế da, điều hòa tự động 3 vùng",
+      ],
     },
   ],
 };
 
 export default function ProductDetailPage() {
-  const tabList = [
-    "Đặc điểm nổi bật",
-    "Thông số kỹ thuật",
-    "Hình ảnh",
-  ];
+  const tabList = ["Đặc điểm nổi bật", "Thông số kỹ thuật", "Hình ảnh"];
   const [activeTab, setActiveTab] = useState(tabList[0]);
 
   return (
@@ -92,7 +100,7 @@ export default function ProductDetailPage() {
       <div className="w-full bg-white/90 py-4 shadow-sm sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex overflow-x-auto no-scrollbar gap-2 md:gap-4 justify-center bg-white/80 rounded-full px-2 py-2 border border-[#03bb65]">
-            {tabList.map(tab => (
+            {tabList.map((tab) => (
               <button
                 key={tab}
                 className={`flex-shrink-0 px-4 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
@@ -125,47 +133,52 @@ export default function ProductDetailPage() {
             </div>
             <div className="flex gap-3 justify-center mt-2">
               {product.gallery.map((img, idx) => (
-                <div key={idx} className="bg-white rounded-xl shadow p-1 cursor-pointer hover:scale-105 transition">
-                  <Image src={img} alt={product.name + idx} width={80} height={60} className="object-contain w-20 h-14" />
+                <div
+                  key={idx}
+                  className="bg-white rounded-xl shadow p-1 cursor-pointer hover:scale-105 transition"
+                >
+                  <Image
+                    src={img}
+                    alt={product.name + idx}
+                    width={80}
+                    height={60}
+                    className="object-contain w-20 h-14"
+                  />
                 </div>
               ))}
             </div>
           </div>
           {/* Main Info */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center">
-            <h2 className="text-3xl font-bold text-[#03bb65] mb-4">New Carnival</h2>
-            <p className="text-lg text-[#1d1d1f] mb-4">New Carnival là mẫu xe đa dụng dẫn đầu phân khúc, sang trọng, hiện đại, vận hành mạnh mẽ, an toàn vượt trội.</p>
+            <h2 className="text-3xl font-bold text-[#03bb65] mb-4">
+              New Carnival
+            </h2>
+            <p className="text-lg text-[#1d1d1f] mb-4">
+              New Carnival là mẫu xe đa dụng dẫn đầu phân khúc, sang trọng, hiện
+              đại, vận hành mạnh mẽ, an toàn vượt trội.
+            </p>
             <ul className="mb-6 space-y-2">
-              <li className="text-base text-[#6e6e73]">Khẳng định vị thế dẫn đầu.</li>
-              <li className="text-base text-[#6e6e73]">Giá chỉ từ <span className="font-bold text-[#03bb65]">{product.price}</span></li>
+              <li className="text-base text-[#6e6e73]">
+                Khẳng định vị thế dẫn đầu.
+              </li>
+              <li className="text-base text-[#6e6e73]">
+                Giá chỉ từ{" "}
+                <span className="font-bold text-[#03bb65]">
+                  {product.price}
+                </span>
+              </li>
             </ul>
-            <button className="mt-4 px-8 py-3 bg-[#03bb65] text-white rounded-xl hover:bg-[#006c67] transition font-bold shadow text-lg w-fit">Đặt xe ngay</button>
+            {/* <button className="mt-4 px-8 py-3 bg-[#03bb65] text-white rounded-xl hover:bg-[#006c67] transition font-bold shadow text-lg w-fit">Đặt xe ngay</button> */}
           </div>
         </section>
         {/* Tab nội dung động */}
-        {activeTab === "Đặc điểm nổi bật" && <TabDacDiemNoiBat product={product} />}
+        {activeTab === "Đặc điểm nổi bật" && (
+          <TabDacDiemNoiBat product={product} />
+        )}
         {activeTab === "Ngoại thất" && <TabNgoaiThat product={product} />}
         {activeTab === "Nội thất" && <TabNoiThat product={product} />}
         {activeTab === "Vận hành" && <TabVanHanh product={product} />}
         {activeTab === "An toàn" && <TabAnToan product={product} />}
-        {/* Các tab khác có thể bổ sung sau */}
-        {/* Versions */}
-        <section className="max-w-7xl mx-auto px-4 py-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-[#03bb65] mb-8 drop-shadow-lg">Đặt xe trực tuyến<br /><span className="text-[#1d1d1f] text-2xl font-semibold">Vui lòng chọn phiên bản</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {product.versions.map((v, idx) => (
-              <div key={idx} className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-                <Image src={product.image} alt={v.name} width={180} height={100} className="object-contain mb-4" />
-                <div className="text-lg font-bold text-[#03bb65] mb-2 text-center">{v.name}</div>
-                <div className="text-base text-[#1d1d1f] font-semibold mb-2">{v.price}</div>
-                <ul className="text-sm text-[#6e6e73] list-disc pl-5 mb-4 text-left w-full">
-                  {v.highlights.map((h, i) => <li key={i}>{h}</li>)}
-                </ul>
-                <button className="mt-auto px-6 py-2 bg-[#03bb65] text-white rounded-lg hover:bg-[#006c67] transition font-bold shadow w-full">Dự toán</button>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
       <style jsx global>{`
         @media (max-width: 768px) {

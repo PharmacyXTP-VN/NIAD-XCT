@@ -25,12 +25,18 @@ export default function ProductSection() {
     setProducts(productsWithBrand);
     // Lấy danh sách hãng xe
     const brandsFromData: string[] = productData.map((item) => item.category);
-    const uniqueBrands: string[] = [...new Set<string>(brandsFromData)].filter(Boolean);
+    const uniqueBrands: string[] = [...new Set<string>(brandsFromData)].filter(
+      Boolean
+    );
     setBrands(uniqueBrands);
     setActiveBrand(uniqueBrands[0] || "");
     // Lấy danh sách loại xe theo hãng
-    const categoriesFromData: string[] = productData.filter((item) => item.category === (uniqueBrands[0] || "")).map((item) => item.name);
-    const uniqueCategories: string[] = [...new Set<string>(categoriesFromData)].filter(Boolean);
+    const categoriesFromData: string[] = productData
+      .filter((item) => item.category === (uniqueBrands[0] || ""))
+      .map((item) => item.name);
+    const uniqueCategories: string[] = [
+      ...new Set<string>(categoriesFromData),
+    ].filter(Boolean);
     setCategories(uniqueCategories);
     // Không dùng activeProduct nữa, chỉ khởi tạo mặc định
     setActiveCategory(uniqueCategories[0] || "");
@@ -38,7 +44,9 @@ export default function ProductSection() {
   }, []);
 
   // Filter theo hãng xe và loại xe
-  const filtered = products.filter((p) => p.category === activeBrand && p.brand === activeCategory);
+  const filtered = products.filter(
+    (p) => p.category === activeBrand && p.brand === activeCategory
+  );
   const total = filtered.length;
   const product = total > 0 ? filtered[currentIndex] : null;
 
@@ -51,43 +59,47 @@ export default function ProductSection() {
   };
 
   return (
-    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8">
+    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8 pt-15">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Filter hãng xe - Đưa lên trên, căn giữa, nổi bật */}
-        <div className="flex flex-col items-center justify-center mb-8 mt-8">
-          <div className="bg-gradient-to-r from-[#e6f9f0] via-white to-[#e6f9f0] shadow-xl rounded-full px-4 py-4 border-2 border-[#03bb65] flex flex-wrap gap-4 justify-center items-center min-h-[64px]">
-            {brands.map((brand) => (
-              <button
-                key={brand}
-                onClick={() => {
-                  setActiveBrand(brand);
-                  // Khi đổi hãng xe, cập nhật lại loại xe
-                  const filteredCategories = products.filter((p) => p.category === brand).map((p) => p.brand);
-                  const uniqueFilteredCategories = [...new Set<string>(filteredCategories)];
-                  setCategories(uniqueFilteredCategories);
-                  setActiveCategory(uniqueFilteredCategories[0] || "");
-                  setCurrentIndex(0);
-                }}
-                className={`px-8 py-3 rounded-full font-bold text-lg transition-all border-2 shadow-md duration-200 focus:outline-none focus:ring-2 focus:ring-[#03bb65] focus:ring-offset-2 ${
-                  activeBrand === brand
-                    ? "text-white bg-[#03bb65] border-[#03bb65] scale-105 drop-shadow-lg"
-                    : "text-[#03bb65] bg-white border-[#03bb65] hover:bg-[#e6f9f0] hover:scale-105"
-                }`}
-                style={{ minWidth: 120 }}
-              >
-                {brand}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* XÓA tiêu đề và filter ở phía trên, chỉ giữ lại filter */}
 
         <div className="bg-white/90 rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
-          {/* Tiêu đề */}
+          {/* Tiêu đề + Filter hãng xe ngang hàng */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <h2 className="font-bold text-4xl md:text-5xl text-[#1d1d1f] tracking-tight drop-shadow-lg text-left mb-0">
               XE CHỞ TIỀN
               <span className="text-[#03bb65]"> NIAD </span>
             </h2>
+            <div className="mt-4 md:mt-0 flex justify-end">
+              <div className="bg-gradient-to-r from-[#e6f9f0] via-white to-[#e6f9f0] shadow-xl rounded-full px-4 py-4 border-2 border-[#03bb65] flex flex-wrap gap-4 justify-end items-center min-h-[64px]">
+                {brands.map((brand) => (
+                  <button
+                    key={brand}
+                    onClick={() => {
+                      setActiveBrand(brand);
+                      // Khi đổi hãng xe, cập nhật lại loại xe
+                      const filteredCategories = products
+                        .filter((p) => p.category === brand)
+                        .map((p) => p.brand);
+                      const uniqueFilteredCategories = [
+                        ...new Set<string>(filteredCategories),
+                      ];
+                      setCategories(uniqueFilteredCategories);
+                      setActiveCategory(uniqueFilteredCategories[0] || "");
+                      setCurrentIndex(0);
+                    }}
+                    className={`px-8 py-3 rounded-full font-bold text-lg transition-all border-2 shadow-md duration-200 focus:outline-none focus:ring-2 focus:ring-[#03bb65] focus:ring-offset-2 ${
+                      activeBrand === brand
+                        ? "text-white bg-[#03bb65] border-[#03bb65] scale-105 drop-shadow-lg"
+                        : "text-[#03bb65] bg-white border-[#03bb65] hover:bg-[#e6f9f0] hover:scale-105"
+                    }`}
+                    style={{ minWidth: 120 }}
+                  >
+                    {brand}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Tabs */}
@@ -146,11 +158,16 @@ export default function ProductSection() {
             <div className="w-full grid md:grid-cols-2 gap-10 items-center flex-1">
               {/* Left Info */}
               <div className="w-auto space-y-4 px-6">
-                <h2 className="text-4xl font-bold uppercase text-[#03bb65] drop-shadow mb-2">{product.name}</h2>
+                <h2 className="text-4xl font-bold uppercase text-[#03bb65] drop-shadow mb-2">
+                  {product.name}
+                </h2>
                 <p className="text-gray-700 text-base mb-2">{product.desc}</p>
-                <p className="text-2xl font-bold text-[#006c67] mb-4">{product.price}</p>
-                <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
-                  onClick={() => window.location.href = "/product-detail"}
+                <p className="text-2xl font-bold text-[#006c67] mb-4">
+                  {product.price}
+                </p>
+                <button
+                  className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
+                  onClick={() => (window.location.href = "/product-detail")}
                 >
                   Chi tiết sản phẩm
                 </button>
@@ -162,23 +179,30 @@ export default function ProductSection() {
                 <Image
                   src={product.image}
                   alt={product.name}
-                  className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl"
+                  className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl cursor-pointer hover:scale-105 transition-transform duration-200"
                   width={600}
                   height={400}
                   priority
+                  onClick={() => (window.location.href = "/product-detail")}
                 />
                 <div className="absolute top-6 right-6 z-20 text-[#03bb65] space-y-4 bg-white/80 rounded-xl px-4 py-2 shadow">
                   <div className="flex items-center gap-2">
                     <Fuel size={16} />
-                    <span className="text-sm font-semibold">{product.fuel}</span>
+                    <span className="text-sm font-semibold">
+                      {product.fuel}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Settings2 size={16} />
-                    <span className="text-sm font-semibold">{product.transmission}</span>
+                    <span className="text-sm font-semibold">
+                      {product.transmission}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users size={16} />
-                    <span className="text-sm font-semibold">{product.seats}</span>
+                    <span className="text-sm font-semibold">
+                      {product.seats}
+                    </span>
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-4">
