@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Product, products as productData } from "@/data/products";
 import Image from "next/image";
 
 export default function ProductSection() {
@@ -156,6 +155,13 @@ export default function ProductSection() {
               {/* Right - Image + Info */}
               <div className="relative flex items-center justify-center">
                 <div className="absolute inset-0 bg-[#e6f9f0] skew-x-[-12deg] origin-left z-0 rounded-2xl border-2 border-[#03bb65]" />
+                {/* ChevronLeft button bên trái khung ảnh */}
+                <button
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition z-20"
+                  style={{ transform: 'translateY(-50%)' }}
+                >
+                  <ChevronLeft size={28} />
+                </button>
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -165,6 +171,13 @@ export default function ProductSection() {
                   priority
                   onClick={() => (window.location.href = "/product-detail")}
                 />
+                {/* ChevronRight button bên phải khung ảnh */}
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition z-20"
+                  style={{ transform: 'translateY(-50%)' }}
+                >
+                  <ChevronRight size={28} />
+                </button>
               </div>
               <div className="absolute top-6 right-6 z-20 text-[#03bb65] space-y-4 bg-white/80 rounded-xl px-4 py-2 shadow">
                   <div className="flex items-center gap-2">
@@ -183,13 +196,6 @@ export default function ProductSection() {
                       {product.seats}
                     </span>
                   </div>
-                </div>
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-4">
-                  <button
-                    className="bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
                 </div>
             </div>
           ) : (

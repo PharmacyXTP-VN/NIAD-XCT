@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function TabNoiThat({ product }: { product: any }) {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -8,7 +10,7 @@ export default function TabNoiThat({ product }: { product: any }) {
         </ul>
       </div>
       <div className="order-1 md:order-2 flex items-center justify-center">
-        <img src={product.gallery[2]} alt="Vận hành" width={500} height={320} className="rounded-2xl shadow-xl object-contain" />
+        <Image src={product.gallery[2]} alt="Vận hành" width={500} height={320} className="rounded-2xl shadow-xl object-contain" />
       </div>
     </section>
   );

@@ -149,23 +149,6 @@ export default function ProductDetailPage() {
         {activeTab === "Vận hành" && <TabVanHanh product={product} />}
         {activeTab === "An toàn" && <TabAnToan product={product} />}
         {/* Các tab khác có thể bổ sung sau */}
-        {/* Versions */}
-        <section className="max-w-7xl mx-auto px-4 py-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-[#03bb65] mb-8 drop-shadow-lg">Đặt xe trực tuyến<br /><span className="text-[#1d1d1f] text-2xl font-semibold">Vui lòng chọn phiên bản</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {product.versions.map((v, idx) => (
-              <div key={idx} className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-                <Image src={product.image} alt={v.name} width={180} height={100} className="object-contain mb-4" />
-                <div className="text-lg font-bold text-[#03bb65] mb-2 text-center">{v.name}</div>
-                <div className="text-base text-[#1d1d1f] font-semibold mb-2">{v.price}</div>
-                <ul className="text-sm text-[#6e6e73] list-disc pl-5 mb-4 text-left w-full">
-                  {v.highlights.map((h, i) => <li key={i}>{h}</li>)}
-                </ul>
-                <button className="mt-auto px-6 py-2 bg-[#03bb65] text-white rounded-lg hover:bg-[#006c67] transition font-bold shadow w-full">Dự toán</button>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
       <style jsx global>{`
         @media (max-width: 768px) {

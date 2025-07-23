@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { products as mockProducts, categories } from "@/data/products";
 import {
   getAllProducts,
   createProduct,
@@ -23,19 +22,19 @@ interface Product {
 }
 
 export default function AdminProducts() {
-  // Chuyển đổi mockProducts sang kiểu Product (bỏ price, image là string)
-  const convertMock = (p: Record<string, unknown>): Product => ({
-    id: p.id as number,
-    name: p.name as string,
-    category: p.category as string,
-    desc: p.desc as string,
-    seats: p.seats as string,
-    transmission: p.transmission as string,
-    fuel: p.fuel as string,
-    image: typeof p.image === "string" ? p.image : null,
-  });
+  // // Chuyển đổi mockProducts sang kiểu Product (bỏ price, image là string)
+  // const convertMock = (p: Record<string, unknown>): Product => ({
+  //   id: p.id as number,
+  //   name: p.name as string,
+  //   category: p.category as string,
+  //   desc: p.desc as string,
+  //   seats: p.seats as string,
+  //   transmission: p.transmission as string,
+  //   fuel: p.fuel as string,
+  //   image: typeof p.image === "string" ? p.image : null,
+  // });
   const [productList, setProductList] = useState<Product[]>(
-    mockProducts.map(convertMock)
+    []
   );
   const [showForm, setShowForm] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
@@ -195,7 +194,7 @@ function ProductForm({
   const [form, setForm] = useState<Product>(
     product || {
       name: "",
-      category: categories[0],
+      category: "",
       desc: "",
       seats: "",
       transmission: "",

@@ -14,7 +14,7 @@ export default function MainProductsPage() {
 	const [activeCategory, setActiveCategory] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
-	const [limit, setLimit] = useState<number>(10);
+	const [limit] = useState<number>(10);
 	const [totalPages, setTotalPages] = useState<number>(1);
 	const [total, setTotal] = useState<number>(0);
 	const [initialized, setInitialized] = useState(false);
@@ -35,7 +35,7 @@ export default function MainProductsPage() {
 			setBrands(uniqueBrands as string[]);
 			setActiveBrand((uniqueBrands[0] as string) || "");
 		}
-	}, [allProducts]);
+	}, [allProducts, brands.length]);
 
 	useEffect(() => {
 		if (allProducts.length > 0 && activeBrand) {
