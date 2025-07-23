@@ -73,7 +73,7 @@ export default function ProductSection() {
   const product = products.find((p: any) => p.model === activeCategory);
 
   return (
-    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8">
+    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8 pt-15">
       <div className="max-w-7xl mx-auto px-4">
         {/* Filter hãng xe */}
         <div className="flex flex-col items-center justify-center mb-8 mt-8">
@@ -159,10 +159,11 @@ export default function ProductSection() {
                 <Image
                   src={product.image}
                   alt={product.name}
-                  className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl"
+                  className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl cursor-pointer hover:scale-105 transition-transform duration-200"
                   width={600}
                   height={400}
                   priority
+                  onClick={() => (window.location.href = "/product-detail")}
                 />
               </div>
               <div className="absolute top-6 right-6 z-20 text-[#03bb65] space-y-4 bg-white/80 rounded-xl px-4 py-2 shadow">
@@ -172,11 +173,15 @@ export default function ProductSection() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Settings2 size={16} />
-                    <span className="text-sm font-semibold">{product.transmission}</span>
+                    <span className="text-sm font-semibold">
+                      {product.transmission}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Users size={16} />
-                    <span className="text-sm font-semibold">{product.seats}</span>
+                    <span className="text-sm font-semibold">
+                      {product.seats}
+                    </span>
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-4">
