@@ -19,7 +19,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/car/${id}`)
+    fetch(`/api/car/get/${id}`)
       .then((res) => res.json())
       .then((data) => setProduct(data.data || null));
   }, [id]);

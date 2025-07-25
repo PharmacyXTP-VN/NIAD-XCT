@@ -2,95 +2,188 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import React from "react"; // Added for React.useEffect
 
 // Định nghĩa kiểu Product cho đúng với backend
 interface Product {
-  id?: number;
+  _id: string;
   name: string;
-  category: string;
-  desc: string;
-  seats: string;
+  manufacturer: string;
+  model: string;
+  price: number;
+  color: string;
+  seats: number;
+  fuelType: string;
   transmission: string;
-  fuel: string;
-  image: File | string | null;
+  licensePlate: string;
+  status: string;
+  year: number;
+  description: string;
+  image: string;
+  images?: { [key: string]: string };
+  highlights?: { name: string; value: string }[];
+  specifications?: { name: string; value: string }[];
 }
 
 export default function AdminProducts() {
-  const [productList, setProductList] = useState<Product[]>(
-    []
-  );
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [activeBrand, setActiveBrand] = useState<string>("");
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const [showForm, setShowForm] = useState(false);
+
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [limit] = useState<number>(10);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const [initialized, setInitialized] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
 
-  // Load danh sách sản phẩm từ API
-  const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/car");
-      const data = await res.json();
-      setProductList(data.data as Product[]);
-    } catch {
-      setError("Không thể tải danh sách sản phẩm");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Lấy toàn bộ sản phẩm để tạo filter
   useEffect(() => {
-    fetchProducts();
+    fetch('/api/car')
+      .then(res => res.json())
+      .then(data => {
+        const arr = Array.isArray(data.data) ? data.data : [];
+        setAllProducts(arr);
+      });
   }, []);
 
-  const handleDelete = async (id: number) => {
-    console.log(id);
+  // Khi allProducts có data, set filter mặc định 1 lần duy nhất
+  useEffect(() => {
+    if (allProducts.length > 0 && brands.length === 0) {
+      const uniqueBrands = [...new Set(allProducts.map((p: any) => (p.manufacturer?.toUpperCase() as string)))];
+      setBrands(uniqueBrands as string[]);
+      setActiveBrand((uniqueBrands[0] as string) || "");
+    }
+  }, [allProducts, brands.length]);
+
+  useEffect(() => {
+    if (allProducts.length > 0 && activeBrand) {
+      const filtered = allProducts.filter((p: any) => p.manufacturer?.toUpperCase() === activeBrand);
+      const uniqueCategories = [...new Set(filtered.map((p: any) => p.model as string))];
+      setCategories(uniqueCategories as string[]);
+      // Chỉ setActiveCategory nếu chưa khởi tạo lần đầu
+      if (!initialized) {
+        setActiveCategory((uniqueCategories[0] as string) || "");
+        setInitialized(true);
+      }
+    }
+  }, [allProducts, activeBrand, initialized]);
+
+  // Gọi API car với filter
+  useEffect(() => {
+    if (!activeBrand || !activeCategory || !initialized) return;
+    const params: any = {
+      manufacturer: activeBrand,
+      model: activeCategory,
+      page,
+      limit,
+    };
+    setLoading(true);
+    fetch(`/api/car?${new URLSearchParams(params)}`)
+      .then(res => res.json())
+      .then(data => {
+        setProductList(
+          Array.isArray(data.data)
+            ? data.data.map((p: any) => ({
+                _id: p._id,
+                name: p.name,
+                manufacturer: p.manufacturer,
+                model: p.model,
+                price: p.price,
+                color: p.color,
+                seats: p.seats,
+                fuelType: p.fuelType,
+                transmission: p.transmission,
+                licensePlate: p.licensePlate,
+                status: p.status,
+                year: p.year,
+                description: p.description,
+                image: p.images?.main || "",
+                images: p.images || {},
+                highlights: p.highlights || [],
+                specifications: p.specifications || [],
+              }))
+            : []
+        );
+        setTotalPages(data.totalPages || 1);
+        setTotal(data.total || 0);
+        setLoading(false);
+      });
+  }, [activeBrand, activeCategory, page, limit, initialized]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeBrand, activeCategory, limit]);
+
+  const handleDelete = async (id: string) => {
     if (!window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
     setLoading(true);
     setError(null);
     try {
-      await fetchProducts();
+      const response = await fetch(`/api/car/delete/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        alert('Xóa sản phẩm thành công!');
+        // Refresh danh sách
+        window.location.reload();
+      } else {
+        const error = await response.json();
+        setError(`Lỗi: ${error.message || 'Xóa thất bại'}`);
+      }
     } catch {
-      setError("Xoá sản phẩm thất bại");
+      setError("Lỗi kết nối server");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (product: Product) => {
-    setEditProduct(product);
+  const handleEdit = async (product: Product) => {
+    setFormLoading(true);
     setShowForm(true);
+    try {
+      const res = await fetch(`/api/car/${product._id}`);
+      const data = await res.json();
+      if (data && data.data) {
+        setEditProduct({
+          _id: data.data._id,
+          name: data.data.name,
+          manufacturer: data.data.manufacturer,
+          model: data.data.model,
+          price: data.data.price,
+          color: data.data.color,
+          seats: data.data.seats,
+          fuelType: data.data.fuelType,
+          transmission: data.data.transmission,
+          licensePlate: data.data.licensePlate,
+          status: data.data.status,
+          year: data.data.year,
+          description: data.data.description,
+          image: data.data.images?.main || '',
+          images: data.data.images || {},
+          highlights: data.data.highlights || [],
+          specifications: data.data.specifications || [],
+        });
+      }
+    } catch {
+      setEditProduct(product);
+    } finally {
+      setFormLoading(false);
+    }
   };
 
   const handleAdd = () => {
     setEditProduct(null);
     setShowForm(true);
   };
-
-  // const handleFormSubmit = async (product: Product) => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     if (product.id) {
-  //       // await updateProduct(
-  //         String(product.id),
-  //         product as unknown as Record<string, string | File | undefined>,
-  //         getToken()
-  //       // );
-  //     } else {
-  //       // await createProduct(
-  //         product as unknown as Record<string, string | File | undefined>,
-  //         getToken()
-  //       // );
-  //     }
-  //     await fetchProducts();
-  //     setShowForm(false);
-  //   } catch {
-  //     setError("Lưu sản phẩm thất bại");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <>
@@ -111,25 +204,70 @@ export default function AdminProducts() {
         )}
         {error && <div className="mt-4 text-red-600 font-bold">{error}</div>}
       </section>
+      <div className="flex flex-wrap gap-4 justify-center mb-6">
+        {brands.map((brand) => (
+          <button
+            key={brand}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#03bb65] text-white border-[#03bb65]" : "bg-white text-[#03bb65] border-[#03bb65]"}`}
+            onClick={() => {
+              setActiveBrand(brand);
+              // Lấy model đầu tiên của brand này và set luôn
+              const filtered = allProducts.filter((p: any) => p.manufacturer?.toUpperCase() === brand);
+              const uniqueCategories = [...new Set(filtered.map((p: any) => p.model as string))];
+              setCategories(uniqueCategories as string[]);
+              setActiveCategory((uniqueCategories[0] as string) || "");
+            }}
+          >
+            {brand}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-4 justify-center mb-6">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#17877b] text-white border-[#17877b]" : "bg-white text-[#17877b] border-[#17877b]"}`}
+            onClick={() => setActiveCategory(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
       <div className="bg-white rounded-2xl shadow p-6 overflow-x-auto">
         <table className="min-w-full text-left">
           <thead>
             <tr className="text-[#b8001c] text-lg">
-              <th className="py-2 px-3">Tên sản phẩm</th>
+              <th className="py-2 px-3">Ảnh</th>
+              <th className="py-2 px-3">Tên xe</th>
               <th className="py-2 px-3">Hãng</th>
-              {/* <th className="py-2 px-3">Giá</th> */}
-              <th className="py-2 px-3">Mô tả</th>
+              <th className="py-2 px-3">Model</th>
+              <th className="py-2 px-3">Biển số</th>
+              <th className="py-2 px-3">Năm</th>
+              <th className="py-2 px-3">Giá</th>
+              <th className="py-2 px-3">Trạng thái</th>
               <th className="py-2 px-3">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {productList.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-3 font- text-black">{p.name}</td>
-                <td className="py-2 px-3 text-black">{p.category}</td>
-                {/* <td className="py-2 px-3 text-black">{p.price}</td> */}
-                <td className="py-2 px-3 max-w-xs truncate text-black">
-                  {p.desc}
+              <tr key={p._id} className="border-b hover:bg-gray-50">
+                <td className="py-2 px-3">
+                  {p.image ? (
+                    <Image src={p.image} alt={p.name} width={80} height={60} className="object-contain rounded shadow" />
+                  ) : (
+                    <span className="text-gray-400">Không ảnh</span>
+                  )}
+                </td>
+                <td className="py-2 px-3 font-semibold text-black">{p.name}</td>
+                <td className="py-2 px-3 text-black">{p.manufacturer}</td>
+                <td className="py-2 px-3 text-black">{p.model}</td>
+                <td className="py-2 px-3 text-black">{p.licensePlate}</td>
+                <td className="py-2 px-3 text-black">{p.year}</td>
+                <td className="py-2 px-3 text-black">{p.price?.toLocaleString()}₫</td>
+                <td className="py-2 px-3 text-black">
+                  <span className={p.status === 'active' ? 'text-green-600 font-bold' : 'text-gray-400 font-semibold'}>
+                    {p.status === 'active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                  </span>
                 </td>
                 <td className="py-2 px-3 flex gap-2">
                   <button
@@ -139,7 +277,7 @@ export default function AdminProducts() {
                     Sửa
                   </button>
                   <button
-                    onClick={() => handleDelete(p.id || 0)}
+                    onClick={() => handleDelete(p._id)}
                     className="px-3 py-1 rounded bg-gray-200 text-[#b8001c] font-bold hover:bg-red-100 transition"
                   >
                     Xoá
@@ -150,13 +288,45 @@ export default function AdminProducts() {
           </tbody>
         </table>
       </div>
+      {/* Pagination controls */}
+      {total > 0 && totalPages > 0 && (
+        <div className="flex justify-center items-center gap-2 mt-12">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
+              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+          >
+            &#8592;
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setPage(i + 1)}
+              className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
+                ${page === i + 1 ? 'bg-[#03bb65] border-[#03bb65] text-white' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+            className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
+              ${page === totalPages ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+          >
+            &#8594;
+          </button>
+        </div>
+      )}
+      <div className="text-center text-xs text-gray-500 mt-2">Tổng số xe: {typeof total === 'number' ? total : 0}</div>
 
       {showForm && (
-        <ProductForm
-          product={editProduct}
-          onClose={() => setShowForm(false)}
-          onSubmit={() => {}}
-        />
+                  <ProductForm
+            product={editProduct}
+            onClose={() => { setShowForm(false); setEditProduct(null); }}
+            loading={formLoading}
+          />
       )}
     </>
   );
@@ -165,42 +335,55 @@ export default function AdminProducts() {
 function ProductForm({
   product,
   onClose,
-  onSubmit,
+  loading
 }: {
   product: Product | null;
   onClose: () => void;
-  onSubmit: (product: Product) => void;
+  loading?: boolean;
 }) {
   const [form, setForm] = useState<Product>(
     product || {
-      name: "",
-      category: "",
-      desc: "",
-      seats: "",
-      transmission: "",
-      fuel: "",
-      image: null,
+      _id: '',
+      name: '',
+      manufacturer: '',
+      model: '',
+      price: 0,
+      color: '',
+      seats: 2,
+      fuelType: '',
+      transmission: '',
+      licensePlate: '',
+      status: 'active',
+      year: new Date().getFullYear(),
+      description: '',
+      image: '',
+      images: { main: '', front: '', back: '', left: '', right: '' },
+      highlights: [],
+      specifications: [],
     }
   );
-  const [preview, setPreview] = useState<string | null>(
-    typeof product?.image === "string" ? product.image : null
-  );
+  const [imageFiles, setImageFiles] = useState<{ [key: string]: File }>({});
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setForm({ ...form, image: file });
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result as string);
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
+  // Đồng bộ form với product mỗi khi product thay đổi
+  React.useEffect(() => {
+    if (product) {
+      setForm({
+        ...form,
+        ...product,
+        images: product.images || { main: '', front: '', back: '', left: '', right: '' },
+        highlights: product.highlights || [],
+        specifications: product.specifications || [],
+      });
+      // Reset imageFiles khi chuyển sang product khác
+      setImageFiles({});
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
+  // Responsive popup
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg relative">
+      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8 w-full max-w-lg md:max-w-2xl relative overflow-y-auto max-h-[90vh]">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-400 hover:text-black text-2xl"
@@ -210,78 +393,335 @@ function ProductForm({
         <h2 className="text-2xl font-bold mb-4 text-[#b8001c]">
           {product ? "Sửa sản phẩm" : "Thêm sản phẩm"}
         </h2>
+        {loading ? (
+          <div className="text-center py-8">Đang tải dữ liệu...</div>
+        ) : (
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            onSubmit(form);
+            
+            if (product) {
+              // Update product - gửi formData với ảnh
+              const formData = new FormData();
+              
+              // Thêm các field text
+              formData.append('name', form.name);
+              formData.append('manufacturer', form.manufacturer);
+              formData.append('model', form.model);
+              formData.append('price', form.price.toString());
+              formData.append('color', form.color);
+              formData.append('seats', form.seats.toString());
+              formData.append('fuelType', form.fuelType);
+              formData.append('transmission', form.transmission);
+              formData.append('licensePlate', form.licensePlate);
+              formData.append('status', form.status);
+              formData.append('year', form.year.toString());
+              formData.append('description', form.description);
+              
+              // Thêm highlights
+              if (form.highlights) {
+                formData.append('highlights', JSON.stringify(form.highlights));
+              }
+              
+              // Thêm specifications
+              if (form.specifications) {
+                formData.append('specifications', JSON.stringify(form.specifications));
+              }
+              
+              // Thêm ảnh files
+              Object.keys(imageFiles).forEach(key => {
+                if (imageFiles[key]) {
+                  formData.append(key, imageFiles[key]);
+                }
+              });
+              
+              try {
+                const response = await fetch(`/api/car/${product._id}`, {
+                  method: 'PUT',
+                  body: formData,
+                });
+                
+                if (response.ok) {
+                  await response.json();
+                  alert('Cập nhật sản phẩm thành công!');
+                  onClose();
+                  // Refresh danh sách
+                  window.location.reload();
+                } else {
+                  const error = await response.json();
+                  alert(`Lỗi: ${error.message || 'Cập nhật thất bại'}`);
+                }
+              } catch {
+                alert('Lỗi kết nối server');
+              }
+            } else {
+              // Add new product - gửi FormData với ảnh
+              const formData = new FormData();
+              
+              // Thêm các field bắt buộc
+              formData.append('name', form.name);
+              formData.append('licensePlate', form.licensePlate);
+              formData.append('price', form.price.toString());
+              formData.append('seats', form.seats.toString());
+              formData.append('fuelType', form.fuelType);
+              formData.append('transmission', form.transmission);
+              formData.append('createdBy', '64d26e4012cfa1b40e96a001'); // ID user tạo
+              
+              // Thêm các field tùy chọn
+              if (form.manufacturer) formData.append('manufacturer', form.manufacturer);
+              if (form.model) formData.append('model', form.model);
+              if (form.color) formData.append('color', form.color);
+              if (form.year) formData.append('year', form.year.toString());
+              if (form.status) formData.append('status', form.status);
+              if (form.description) formData.append('description', form.description);
+              
+              // Thêm highlights
+              if (form.highlights && form.highlights.length > 0) {
+                formData.append('highlights', JSON.stringify(form.highlights));
+              }
+              
+              // Thêm specifications
+              if (form.specifications && form.specifications.length > 0) {
+                formData.append('specifications', JSON.stringify(form.specifications));
+              }
+              
+              // Thêm ảnh files
+              Object.keys(imageFiles).forEach(key => {
+                if (imageFiles[key]) {
+                  formData.append(key, imageFiles[key]);
+                }
+              });
+              
+              try {
+                const response = await fetch('/api/car/', {
+                  method: 'POST',
+                  body: formData,
+                });
+                
+                if (response.ok) {
+                  await response.json();
+                  alert('Tạo sản phẩm thành công!');
+                  onClose();
+                  // Refresh danh sách
+                  window.location.reload();
+                } else {
+                  const error = await response.json();
+                  alert(`Lỗi: ${error.message || 'Tạo sản phẩm thất bại'}`);
+                }
+              } catch {
+                alert('Lỗi kết nối server');
+              }
+            }
           }}
           className="space-y-4"
         >
           <input
-            className="w-full border p-3 rounded-xl text-lg"
-            placeholder="Tên sản phẩm"
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Tên xe"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
           />
           <input
-            className="w-full border p-3 rounded-xl text-lg"
-            placeholder="Hãng (category)"
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Hãng (manufacturer)"
+            value={form.manufacturer}
+            onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
             required
           />
           <input
-            className="w-full border p-3 rounded-xl text-lg"
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Model"
+            value={form.model}
+            onChange={(e) => setForm({ ...form, model: e.target.value })}
+            required
+          />
+          <input
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Biển số"
+            value={form.licensePlate}
+            onChange={(e) => setForm({ ...form, licensePlate: e.target.value })}
+            required
+          />
+          <input
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Năm sản xuất"
+            type="number"
+            value={form.year}
+            onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
+            required
+          />
+          <input
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Giá bán"
+            type="number"
+            value={form.price}
+            onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+            required
+          />
+          <input
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            placeholder="Màu xe"
+            value={form.color}
+            onChange={(e) => setForm({ ...form, color: e.target.value })}
+            required
+          />
+          <input
+            className="w-full border p-3 rounded-xl text-lg text-black"
             placeholder="Số chỗ"
+            type="number"
             value={form.seats}
-            onChange={(e) => setForm({ ...form, seats: e.target.value })}
+            onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })}
             required
           />
-          <input
-            className="w-full border p-3 rounded-xl text-lg"
-            placeholder="Hộp số (VD: Tự động, Số sàn)"
+          <select
+            className="w-full border p-3 rounded-xl text-lg text-black"
+            value={form.fuelType}
+            onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
+            required
+          >
+            <option value="">Chọn nhiên liệu</option>
+            <option value="petrol">Xăng</option>
+            <option value="diesel">Diesel</option>
+            <option value="electric">Điện</option>
+          </select>
+          <select
+            className="w-full border p-3 rounded-xl text-lg text-black"
             value={form.transmission}
             onChange={(e) => setForm({ ...form, transmission: e.target.value })}
             required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg"
-            placeholder="Nhiên liệu (VD: Xăng, Dầu, Điện)"
-            value={form.fuel}
-            onChange={(e) => setForm({ ...form, fuel: e.target.value })}
-            required
-          />
+          >
+            <option value="">Chọn hộp số</option>
+            <option value="manual">Số sàn</option>
+            <option value="automatic">Số tự động</option>
+          </select>
           <textarea
-            className="w-full border p-3 rounded-xl text-lg"
+            className="w-full border p-3 rounded-xl text-lg text-black"
             placeholder="Mô tả"
-            value={form.desc}
-            onChange={(e) => setForm({ ...form, desc: e.target.value })}
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
             rows={3}
           />
-          <div>
-            <label className="block mb-1 font-medium">Ảnh sản phẩm</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full border p-2 rounded-xl"
-            />
-            {preview && typeof preview === "string" && (
-              <div className="mt-2 rounded-xl max-h-40 object-contain border overflow-hidden">
-                <Image
-                  src={preview}
-                  alt="preview"
-                  width={300}
-                  height={120}
-                  style={{
-                    objectFit: "contain",
-                    width: "100%",
-                    height: "120px",
+          {/* 5 ảnh */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {['main', 'front', 'back', 'left', 'right'].map((key) => (
+              <div key={key} className="flex flex-col">
+                <label className="block font-medium mb-1 text-black">Ảnh {key}</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full border p-2 rounded-xl text-sm text-black"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      // Lưu file để upload
+                      setImageFiles(prev => ({ ...prev, [key]: file }));
+                      
+                      // Tạo preview
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const result = event.target?.result as string;
+                        setForm({ 
+                          ...form, 
+                          images: { 
+                            ...form.images, 
+                            [key]: result 
+                          } 
+                        });
+                      };
+                      reader.readAsDataURL(file);
+                    }
                   }}
                 />
+                {form.images?.[key] && (
+                  <div className="mt-2">
+                    <Image
+                      src={form.images[key]}
+                      alt={key}
+                      width={120}
+                      height={80}
+                      className="rounded object-contain max-h-20 border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newImages = { ...form.images };
+                        delete newImages[key];
+                        setForm({ ...form, images: newImages });
+                        
+                        // Xóa file đã lưu
+                        const newImageFiles = { ...imageFiles };
+                        delete newImageFiles[key];
+                        setImageFiles(newImageFiles);
+                      }}
+                      className="text-red-500 text-xs mt-1 block"
+                    >
+                      Xóa ảnh
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
+            ))}
+          </div>
+          {/* Đặc điểm nổi bật */}
+          <div>
+            <label className="block font-medium mb-1 text-black">Đặc điểm nổi bật</label>
+            {(form.highlights || []).map((h, idx) => (
+              <div key={idx} className="flex gap-2 mb-1">
+                <input
+                  className="border p-2 rounded flex-1 text-black"
+                  placeholder="Tên đặc điểm"
+                  value={h.name}
+                  onChange={e => {
+                    const arr = [...(form.highlights || [])];
+                    arr[idx].name = e.target.value;
+                    setForm({ ...form, highlights: arr });
+                  }}
+                />
+                <input
+                  className="border p-2 rounded flex-1 text-black"
+                  placeholder="Giá trị"
+                  value={h.value}
+                  onChange={e => {
+                    const arr = [...(form.highlights || [])];
+                    arr[idx].value = e.target.value;
+                    setForm({ ...form, highlights: arr });
+                  }}
+                />
+                <button type="button" onClick={() => setForm({ ...form, highlights: (form.highlights || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
+              </div>
+            ))}
+            <button type="button" onClick={() => setForm({ ...form, highlights: [...(form.highlights || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm đặc điểm</button>
+          </div>
+          {/* Thông số kỹ thuật */}
+          <div>
+            <label className="block font-medium mb-1 text-black">Thông số kỹ thuật</label>
+            {(form.specifications || []).map((s, idx) => (
+              <div key={idx} className="flex gap-2 mb-1">
+                <input
+                  className="border p-2 rounded flex-1 text-black"
+                  placeholder="Tên thông số"
+                  value={s.name}
+                  onChange={e => {
+                    const arr = [...(form.specifications || [])];
+                    arr[idx].name = e.target.value;
+                    setForm({ ...form, specifications: arr });
+                  }}
+                />
+                <input
+                  className="border p-2 rounded flex-1 text-black"
+                  placeholder="Giá trị"
+                  value={s.value}
+                  onChange={e => {
+                    const arr = [...(form.specifications || [])];
+                    arr[idx].value = e.target.value;
+                    setForm({ ...form, specifications: arr });
+                  }}
+                />
+                <button type="button" onClick={() => setForm({ ...form, specifications: (form.specifications || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
+              </div>
+            ))}
+            <button type="button" onClick={() => setForm({ ...form, specifications: [...(form.specifications || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm thông số</button>
           </div>
           <div className="flex gap-4 mt-4">
             <button
@@ -299,6 +739,7 @@ function ProductForm({
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

@@ -8,15 +8,31 @@ export default function LoginAdminPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login: username 'admin', password '123456'
-    if (username === "admin" && password === "123456") {
-      document.cookie = "admin_auth=true; path=/";
-      router.push("/admin/dashboard");
-    } else {
-      setError("Sai tài khoản hoặc mật khẩu");
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userName: username, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Lưu user info vào localStorage hoặc cookie nếu cần
+        localStorage.setItem("user", JSON.stringify(data.user));
+        // Chuyển hướng vào dashboard
+        router.push("/admin/dashboard");
+      } else {
+        setError(data.message || data.error || "Đăng nhập thất bại");
+      }
+    } catch {
+      setError("Lỗi kết nối máy chủ");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,8 +64,9 @@ export default function LoginAdminPage() {
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-[#b8001c] to-black text-white py-3 rounded-xl font-bold text-lg shadow hover:scale-105 transition"
+            disabled={loading}
           >
-            Đăng nhập
+            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
       </div>

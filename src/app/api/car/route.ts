@@ -29,4 +29,25 @@ export async function GET(req: NextRequest) {
   });
   const data = await res.json();
   return NextResponse.json(data);
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const formData = await req.formData();
+    
+    const res = await fetch(`${BASE_URL}/api/car/`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      return NextResponse.json(data);
+    } else {
+      return NextResponse.json(data, { status: res.status });
+    }
+  } catch (error) {
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  }
 } 
