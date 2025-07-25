@@ -1,11 +1,9 @@
 // ✅ File: src/app/admin/register/page.tsx
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { registerAdmin, loginAdmin } from "@/services/adminService";
+// import { registerAdmin, loginAdmin } from "@/services/adminService";
 
 export default function RegisterAdminPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,10 +11,10 @@ export default function RegisterAdminPage() {
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await registerAdmin(email, password);
-      const res = await loginAdmin(email, password);
-      localStorage.setItem("adminToken", res.token);
-      router.push("/admin/dashboard");
+      // await registerAdmin(email, password);
+      // const res = await loginAdmin(email, password);
+      // localStorage.setItem("adminToken", res.token);
+      // router.push("/admin/dashboard");
     } catch (err: unknown) {
       if (
         typeof err === "object" &&

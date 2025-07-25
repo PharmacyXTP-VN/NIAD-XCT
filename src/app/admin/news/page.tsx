@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { newsList as initialNewsList, NewsItem } from "@/data/news";
 
+interface NewsItem {
+  id: string;
+  title: string;
+  date: string;
+  content: string;
+}
+  
 export default function AdminNews() {
-  const [newsList, setNewsList] = useState<NewsItem[]>(initialNewsList);
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editNews, setEditNews] = useState<NewsItem | null>(null);
 

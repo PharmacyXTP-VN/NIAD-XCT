@@ -1,12 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  getAllProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "@/services/adminService";
 import Image from "next/image";
 
 // Định nghĩa kiểu Product cho đúng với backend
@@ -22,17 +16,6 @@ interface Product {
 }
 
 export default function AdminProducts() {
-  // // Chuyển đổi mockProducts sang kiểu Product (bỏ price, image là string)
-  // const convertMock = (p: Record<string, unknown>): Product => ({
-  //   id: p.id as number,
-  //   name: p.name as string,
-  //   category: p.category as string,
-  //   desc: p.desc as string,
-  //   seats: p.seats as string,
-  //   transmission: p.transmission as string,
-  //   fuel: p.fuel as string,
-  //   image: typeof p.image === "string" ? p.image : null,
-  // });
   const [productList, setProductList] = useState<Product[]>(
     []
   );
@@ -41,17 +24,14 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Lấy token từ localStorage
-  const getToken = () =>
-    (typeof window !== "undefined" && localStorage.getItem("token")) || "";
-
   // Load danh sách sản phẩm từ API
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllProducts();
-      setProductList(data);
+      const res = await fetch("/api/car");
+      const data = await res.json();
+      setProductList(data.data as Product[]);
     } catch {
       setError("Không thể tải danh sách sản phẩm");
     } finally {
@@ -64,11 +44,11 @@ export default function AdminProducts() {
   }, []);
 
   const handleDelete = async (id: number) => {
+    console.log(id);
     if (!window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) return;
     setLoading(true);
     setError(null);
     try {
-      await deleteProduct(String(id), getToken());
       await fetchProducts();
     } catch {
       setError("Xoá sản phẩm thất bại");
@@ -87,30 +67,30 @@ export default function AdminProducts() {
     setShowForm(true);
   };
 
-  const handleFormSubmit = async (product: Product) => {
-    setLoading(true);
-    setError(null);
-    try {
-      if (product.id) {
-        await updateProduct(
-          String(product.id),
-          product as unknown as Record<string, string | File | undefined>,
-          getToken()
-        );
-      } else {
-        await createProduct(
-          product as unknown as Record<string, string | File | undefined>,
-          getToken()
-        );
-      }
-      await fetchProducts();
-      setShowForm(false);
-    } catch {
-      setError("Lưu sản phẩm thất bại");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleFormSubmit = async (product: Product) => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     if (product.id) {
+  //       // await updateProduct(
+  //         String(product.id),
+  //         product as unknown as Record<string, string | File | undefined>,
+  //         getToken()
+  //       // );
+  //     } else {
+  //       // await createProduct(
+  //         product as unknown as Record<string, string | File | undefined>,
+  //         getToken()
+  //       // );
+  //     }
+  //     await fetchProducts();
+  //     setShowForm(false);
+  //   } catch {
+  //     setError("Lưu sản phẩm thất bại");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <>
@@ -175,7 +155,7 @@ export default function AdminProducts() {
         <ProductForm
           product={editProduct}
           onClose={() => setShowForm(false)}
-          onSubmit={handleFormSubmit}
+          onSubmit={() => {}}
         />
       )}
     </>

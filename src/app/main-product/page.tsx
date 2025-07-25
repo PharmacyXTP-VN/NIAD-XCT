@@ -4,6 +4,7 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import Image from "next/image";
 import { MapPinIcon, Cog6ToothIcon, BoltIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
+import LoadingBanner from "@/components/LoadingBanner";
 
 export default function MainProductsPage() {
 	const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -75,6 +76,10 @@ export default function MainProductsPage() {
 		setPage(1);
 	}, [activeBrand, activeCategory, limit]);
 
+	if (loading || brands.length === 0) {
+		return <LoadingBanner />;
+	}
+
 	return (
 		<DefaultLayout>
 			<div className="min-h-screen bg-[#f0f2f5] pb-12">
@@ -135,7 +140,7 @@ export default function MainProductsPage() {
 								>
 									<div className="w-full md:w-2/5 flex items-center justify-center bg-[#f0f2f5] rounded-2xl h-[180px] md:h-[220px]">
 										<Image
-											src={product.image}
+											src={product.images?.main || product.image}
 											alt={product.model}
 											width={320}
 											height={180}
@@ -161,9 +166,16 @@ export default function MainProductsPage() {
 												<MapPinIcon className="w-5 h-5 text-[#b8001c] inline" />
 												<span>Số chỗ: {product.seats}</span>
 											</li>
-											{product.features && product.features.map((f: string, idx: number) => (
+											{/* Hiển thị highlights nếu có */}
+											{Array.isArray(product.highlights) && product.highlights.length > 0 && product.highlights.map((h: any, idx: number) => (
 												<li key={idx} className="flex items-center gap-2 text-[#1d1d1f] text-base">
-													<span>• {f}</span>
+													<span><b>{h.name}:</b> {h.value}</span>
+												</li>
+											))}
+											{/* Hiển thị specifications nếu có */}
+											{Array.isArray(product.specifications) && product.specifications.length > 0 && product.specifications.map((s: any, idx: number) => (
+												<li key={idx} className="flex items-center gap-2 text-[#1d1d1f] text-base">
+													<span><b>{s.name}:</b> {s.value}</span>
 												</li>
 											))}
 										</ul>
@@ -172,7 +184,7 @@ export default function MainProductsPage() {
 											<div className="text-xs text-gray-600 font-medium">{product.description}</div>
 											<button
 												className="mt-3 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
-												onClick={() => window.location.href = `/product-detail/${product._id}`}
+												onClick={() => window.location.href = `/product-detail/${product._id || product.id}`}
 											>
 												Chi tiết sản phẩm
 											</button>

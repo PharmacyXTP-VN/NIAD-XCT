@@ -9,6 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
+import LoadingBanner from "@/components/LoadingBanner";
 
 export default function ProductSection() {
   const [brands, setBrands] = useState<string[]>([]);
@@ -70,6 +71,10 @@ export default function ProductSection() {
 
   // Khi fill UI, lấy đúng data theo model
   const product = products.find((p: any) => p.model === activeCategory);
+
+  if (!initialized || brands.length === 0) {
+    return <LoadingBanner />;
+  }
 
   return (
     <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8 pt-15">
@@ -143,11 +148,23 @@ export default function ProductSection() {
                 <h2 className="text-4xl font-bold uppercase text-[#03bb65] drop-shadow mb-2">{product.name}</h2>
                 <div className="flex flex-wrap gap-4 mb-2">
                   <span className="inline-flex items-center gap-1 text-base text-gray-700"><b>Số lượng:</b> {product.count}</span>
+                  {/* Hiển thị highlights nếu có */}
+                  {Array.isArray(product.highlights) && product.highlights.length > 0 && product.highlights.map((h: any, idx: number) => (
+                    <span key={idx} className="inline-flex items-center gap-1 text-base text-gray-700"><b>{h.name}:</b> {h.value}</span>
+                  ))}
+                  {/* Hiển thị specifications nếu có */}
+                  {Array.isArray(product.specifications) && product.specifications.length > 0 && product.specifications.map((s: any, idx: number) => (
+                    <span key={idx} className="inline-flex items-center gap-1 text-base text-gray-700"><b>{s.name}:</b> {s.value}</span>
+                  ))}
                 </div>
                 <p className="text-gray-700 text-base mb-2">{product.description}</p>
                 <p className="text-2xl font-bold text-[#006c67] mb-4">{product.price?.toLocaleString()}₫</p>
                 <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
-                  onClick={() => window.location.href = "/product-detail"}
+                  onClick={() => {
+                    const id = product._id || product.id;
+                    if (id) window.location.href = `/product-detail/${id}`;
+                    else alert('Không tìm thấy id sản phẩm!');
+                  }}
                 >
                   Chi tiết sản phẩm
                 </button>
@@ -163,13 +180,13 @@ export default function ProductSection() {
                   <ChevronLeft size={28} />
                 </button>
                 <Image
-                  src={product.image}
+                  src={product.images?.main || product.image || '/images/news/test2.png'}
                   alt={product.name}
                   className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl cursor-pointer hover:scale-105 transition-transform duration-200"
                   width={600}
                   height={400}
                   priority
-                  onClick={() => (window.location.href = "/product-detail")}
+                  onClick={() => (window.location.href = `/product-detail/${product._id || product.id}`)}
                 />
                 {/* ChevronRight button bên phải khung ảnh */}
                 <button

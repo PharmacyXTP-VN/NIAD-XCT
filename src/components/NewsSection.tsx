@@ -3,49 +3,19 @@
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { useRef, useEffect } from "react";
-
-const newsList = [
-  {
-    title: "Ra mắt xe chở tiền chống đạn phiên bản 2025",
-    description: "Dòng xe mới đạt tiêu chuẩn EN1063 cấp độ B6 chống đạn.",
-    image: "/images/news/test2.png",
-    date: "12/05/2025",
-  },
-  {
-    title: "Ký kết hợp tác với ngân hàng quốc tế",
-    description: "Cung cấp 50 xe vận chuyển tiền cho hệ thống ATM toàn quốc.",
-    image: "/images/news/test2.png",
-    date: "05/05/2025",
-  },
-  {
-    title: "Hội thảo “An ninh vận chuyển tài chính 4.0”",
-    description: "Giải pháp tích hợp GPS, camera AI và cảnh báo xâm nhập.",
-    image: "/images/news/test2.png",
-    date: "25/04/2025",
-  },
-  {
-    title: "Tăng cường bảo mật xe vận chuyển tiền",
-    description: "Trang bị khóa sinh trắc học và mã hóa dữ liệu đường truyền.",
-    image: "/images/news/test2.png",
-    date: "20/04/2025",
-  },
-];
-
-const awards = [
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-  "/images/award1.jpg",
-];
+import { useRef, useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function NewsSection() {
+  const [newsList, setNewsList] = useState<any[]>([]);
+  useEffect(() => {
+    fetch("/api/news/list?limit=4")
+      .then(res => res.json())
+      .then(data => {
+        setNewsList(Array.isArray(data.data) ? data.data : []);
+      });
+  }, []);
+
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [sliderInstanceRef, slider] = useKeenSlider<HTMLDivElement>({
     loop: true,
@@ -85,6 +55,19 @@ export default function NewsSection() {
     return () => clearInterval(interval);
   }, [slider]);
 
+  const awards = [
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+    "/images/award1.jpg",
+  ];
+
   return (
     <section className="py-12 bg-[#f0f2f5]">
       <div className="max-w-7xl mx-auto px-4">
@@ -102,42 +85,45 @@ export default function NewsSection() {
         <div className="flex flex-col lg:flex-row gap-6 min-h-[420px] lg:h-[480px]">
           {/* Tin chính bên trái */}
           <div className="w-full lg:w-[62%] h-full flex flex-col">
-            <div className="rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col h-full bg-white hover:shadow-2xl transition-shadow duration-300">
-              <div className="w-full" style={{ aspectRatio: '16/7', background: '#fff' }}>
-                <Image
-                  src={newsList[0].image}
-                  alt={newsList[0].title}
-                  className="w-full h-full object-contain bg-white"
-                  width={800}
-                  height={350}
-                  priority
-                  style={{ width: '100%', height: '100%' }}
-                />
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-end min-h-0">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">{newsList[0].date}</p>
-                  <h3 className="text-2xl font-bold text-[#1d1d1f] mb-2 leading-tight">
-                    {newsList[0].title}
-                  </h3>
-                  <p className="text-base text-[#6e6e73]">
-                    {newsList[0].description}
-                  </p>
+            {newsList.length > 0 && (
+              <Link href={`/news/${newsList[0]._id}`} className="rounded-2xl overflow-hidden shadow-lg flex-1 flex flex-col h-full bg-white hover:shadow-2xl transition-shadow duration-300 cursor-pointer">
+                <div className="w-full" style={{ aspectRatio: '16/7', background: '#fff' }}>
+                  <Image
+                    src={newsList[0].thumbnail}
+                    alt={newsList[0].title}
+                    className="w-full h-full object-contain bg-white"
+                    width={800}
+                    height={350}
+                    priority
+                    style={{ width: '100%', height: '100%' }}
+                  />
                 </div>
-              </div>
-            </div>
+                <div className="p-6 flex-1 flex flex-col justify-end min-h-0">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">{newsList[0].publishedAt ? new Date(newsList[0].publishedAt).toLocaleDateString() : ""}</p>
+                    <h3 className="text-2xl font-bold text-[#1d1d1f] mb-2 leading-tight">
+                      {newsList[0].title}
+                    </h3>
+                    <p className="text-base text-[#6e6e73]">
+                      {newsList[0].summary}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            )}
           </div>
 
           {/* 3 tin phụ bên phải */}
           <div className="w-full lg:w-[38%] flex flex-col gap-4 h-full min-h-0">
             {newsList.slice(1, 4).map((news, idx) => (
-              <div
-                key={idx}
-                className="rounded-2xl overflow-hidden shadow flex-1 flex flex-row bg-white hover:shadow-lg transition-shadow duration-300 min-h-[120px]"
+              <Link
+                href={`/news/${news._id}`}
+                key={news._id || idx}
+                className="rounded-2xl overflow-hidden shadow flex-1 flex flex-row bg-white hover:shadow-lg transition-shadow duration-300 min-h-[120px] cursor-pointer"
               >
                 <div className="w-[120px] h-full flex items-center justify-center bg-gray-50">
                   <Image
-                    src={news.image}
+                    src={news.thumbnail}
                     alt={news.title}
                     className="object-cover rounded-xl"
                     width={100}
@@ -146,15 +132,15 @@ export default function NewsSection() {
                   />
                 </div>
                 <div className="flex-1 p-4 flex flex-col justify-center">
-                  <p className="text-xs text-gray-500 mb-1">{news.date}</p>
+                  <p className="text-xs text-gray-500 mb-1">{news.publishedAt ? new Date(news.publishedAt).toLocaleDateString() : ""}</p>
                   <h4 className="text-base font-semibold text-[#1d1d1f] mb-1 leading-tight">
                     {news.title}
                   </h4>
                   <p className="text-sm text-[#6e6e73]">
-                    {news.description}
+                    {news.summary}
                   </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
