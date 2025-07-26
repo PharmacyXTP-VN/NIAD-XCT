@@ -4,6 +4,7 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import LoadingBanner from "@/components/LoadingBanner";
 
 export default function NewsPage() {
 	const [newsList, setNewsList] = useState<any[]>([]);
@@ -28,6 +29,8 @@ export default function NewsPage() {
 
 	const uuDaiNews = newsList.filter(news => Array.isArray(news.tags) && news.tags.includes("ưu đãi"));
 	const bannerNews = uuDaiNews.length > 0 ? uuDaiNews[0] : newsList[0];
+
+	if (loading) return <LoadingBanner />;
 
 	return (
 		<DefaultLayout>
@@ -92,9 +95,7 @@ export default function NewsPage() {
 						<div className="w-full lg:w-1/2 flex flex-col gap-6">
 							<h2 className="text-2xl font-bold text-[#17877b] mb-2 uppercase">Xem nhiều</h2>
 							<div className="flex flex-col gap-4">
-								{loading ? (
-									<div>Đang tải tin tức...</div>
-								) : newsPopular.length === 0 ? (
+								{newsPopular.length === 0 ? (
 									<div>Không có tin tức.</div>
 								) : (
 									newsPopular.map((news, idx) => (
@@ -128,9 +129,7 @@ export default function NewsPage() {
 						<div className="w-full lg:w-1/2 flex flex-col gap-6">
 							<h2 className="text-2xl font-bold text-[#17877b] mb-2 uppercase">Tin mới</h2>
 							{/* Tin mới lớn */}
-							{loading ? (
-								<div>Đang tải tin tức...</div>
-							) : newsLatest.length === 0 ? (
+							{newsLatest.length === 0 ? (
 								<div>Không có tin tức.</div>
 							) : (
 								<Link href={`/news/${newsLatest[0]._id}`} className="rounded-2xl overflow-hidden shadow-lg bg-white flex flex-col cursor-pointer hover:shadow-2xl">

@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import DefaultLayout from '@/layout/DefaultLayout';
 import Image from 'next/image';
+import LoadingBanner from '@/components/LoadingBanner';
+
 export default function NewsDetailPage() {
   const params = useParams();
   const id = params?.id as string;
@@ -22,7 +24,7 @@ export default function NewsDetailPage() {
       });
   }, [id]);
 
-  if (loading) return <div className="text-center py-10">Đang tải...</div>;
+  if (loading) return <LoadingBanner />;
   if (!news) return notFound();
 
   return (
@@ -35,6 +37,8 @@ export default function NewsDetailPage() {
             <Image
               src={news.thumbnail || '/images/news/test2.png'}
               alt={news.title}
+              width={800}
+              height={300}
               className="w-full max-w-2xl h-64 object-cover rounded-2xl shadow-lg mb-6 border-4 border-white"
             />
             <h1 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg uppercase leading-tight">
@@ -57,7 +61,7 @@ export default function NewsDetailPage() {
         </section>
         {/* Nội dung chi tiết */}
         <section className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl p-8 md:p-12 mb-12">
-          <div className="prose max-w-none prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto prose-img:border prose-img:border-[#e6f9f0] prose-h1:text-3xl prose-h2:text-2xl prose-p:text-base prose-p:text-black" dangerouslySetInnerHTML={{ __html: news.content || "" }} />
+          <div className="prose max-w-none prose-img:rounded-xl prose-img:shadow-lg prose-img:mx-auto prose-img:border prose-img:border-[#e6f9f0] prose-h1:text-3xl prose-h2:text-2xl prose-p:text-base text-black prose-p:text-black" dangerouslySetInnerHTML={{ __html: news.content || "" }} />
         </section>
       </div>
     </DefaultLayout>
