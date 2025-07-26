@@ -22,7 +22,7 @@ interface Product {
   image: string;
   images?: { [key: string]: string };
   highlights?: { name: string; value: string }[];
-  specifications?: { name: string; value: string }[];
+  specifications?: string; // URL ảnh thông số kỹ thuật
 }
 
 export default function AdminProducts() {
@@ -46,9 +46,9 @@ export default function AdminProducts() {
 
   // Lấy toàn bộ sản phẩm để tạo filter
   useEffect(() => {
-    fetch('/api/car')
-      .then(res => res.json())
-      .then(data => {
+    fetch("/api/car")
+      .then((res) => res.json())
+      .then((data) => {
         const arr = Array.isArray(data.data) ? data.data : [];
         setAllProducts(arr);
       });
@@ -57,7 +57,11 @@ export default function AdminProducts() {
   // Khi allProducts có data, set filter mặc định 1 lần duy nhất
   useEffect(() => {
     if (allProducts.length > 0 && brands.length === 0) {
-      const uniqueBrands = [...new Set(allProducts.map((p: any) => (p.manufacturer?.toUpperCase() as string)))];
+      const uniqueBrands = [
+        ...new Set(
+          allProducts.map((p: any) => p.manufacturer?.toUpperCase() as string)
+        ),
+      ];
       setBrands(uniqueBrands as string[]);
       setActiveBrand((uniqueBrands[0] as string) || "");
     }
@@ -65,8 +69,12 @@ export default function AdminProducts() {
 
   useEffect(() => {
     if (allProducts.length > 0 && activeBrand) {
-      const filtered = allProducts.filter((p: any) => p.manufacturer?.toUpperCase() === activeBrand);
-      const uniqueCategories = [...new Set(filtered.map((p: any) => p.model as string))];
+      const filtered = allProducts.filter(
+        (p: any) => p.manufacturer?.toUpperCase() === activeBrand
+      );
+      const uniqueCategories = [
+        ...new Set(filtered.map((p: any) => p.model as string)),
+      ];
       setCategories(uniqueCategories as string[]);
       // Chỉ setActiveCategory nếu chưa khởi tạo lần đầu
       if (!initialized) {
@@ -87,8 +95,8 @@ export default function AdminProducts() {
     };
     setLoading(true);
     fetch(`/api/car?${new URLSearchParams(params)}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setProductList(
           Array.isArray(data.data)
             ? data.data.map((p: any) => ({
@@ -128,16 +136,16 @@ export default function AdminProducts() {
     setError(null);
     try {
       const response = await fetch(`/api/car/delete/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (response.ok) {
-        alert('Xóa sản phẩm thành công!');
+        alert("Xóa sản phẩm thành công!");
         // Refresh danh sách
         window.location.reload();
       } else {
         const error = await response.json();
-        setError(`Lỗi: ${error.message || 'Xóa thất bại'}`);
+        setError(`Lỗi: ${error.message || "Xóa thất bại"}`);
       }
     } catch {
       setError("Lỗi kết nối server");
@@ -167,7 +175,7 @@ export default function AdminProducts() {
           status: data.data.status,
           year: data.data.year,
           description: data.data.description,
-          image: data.data.images?.main || '',
+          image: data.data.images?.main || "",
           images: data.data.images || {},
           highlights: data.data.highlights || [],
           specifications: data.data.specifications || [],
@@ -208,12 +216,20 @@ export default function AdminProducts() {
         {brands.map((brand) => (
           <button
             key={brand}
-            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#03bb65] text-white border-[#03bb65]" : "bg-white text-[#03bb65] border-[#03bb65]"}`}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${
+              activeBrand === brand
+                ? "bg-[#03bb65] text-white border-[#03bb65]"
+                : "bg-white text-[#03bb65] border-[#03bb65]"
+            }`}
             onClick={() => {
               setActiveBrand(brand);
               // Lấy model đầu tiên của brand này và set luôn
-              const filtered = allProducts.filter((p: any) => p.manufacturer?.toUpperCase() === brand);
-              const uniqueCategories = [...new Set(filtered.map((p: any) => p.model as string))];
+              const filtered = allProducts.filter(
+                (p: any) => p.manufacturer?.toUpperCase() === brand
+              );
+              const uniqueCategories = [
+                ...new Set(filtered.map((p: any) => p.model as string)),
+              ];
               setCategories(uniqueCategories as string[]);
               setActiveCategory((uniqueCategories[0] as string) || "");
             }}
@@ -226,7 +242,11 @@ export default function AdminProducts() {
         {categories.map((cat) => (
           <button
             key={cat}
-            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#17877b] text-white border-[#17877b]" : "bg-white text-[#17877b] border-[#17877b]"}`}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${
+              activeCategory === cat
+                ? "bg-[#17877b] text-white border-[#17877b]"
+                : "bg-white text-[#17877b] border-[#17877b]"
+            }`}
             onClick={() => setActiveCategory(cat)}
           >
             {cat}
@@ -253,7 +273,13 @@ export default function AdminProducts() {
               <tr key={p._id} className="border-b hover:bg-gray-50">
                 <td className="py-2 px-3">
                   {p.image ? (
-                    <Image src={p.image} alt={p.name} width={80} height={60} className="object-contain rounded shadow" />
+                    <Image
+                      src={p.image}
+                      alt={p.name}
+                      width={80}
+                      height={60}
+                      className="object-contain rounded shadow"
+                    />
                   ) : (
                     <span className="text-gray-400">Không ảnh</span>
                   )}
@@ -263,10 +289,20 @@ export default function AdminProducts() {
                 <td className="py-2 px-3 text-black">{p.model}</td>
                 <td className="py-2 px-3 text-black">{p.licensePlate}</td>
                 <td className="py-2 px-3 text-black">{p.year}</td>
-                <td className="py-2 px-3 text-black">{p.price?.toLocaleString()}₫</td>
                 <td className="py-2 px-3 text-black">
-                  <span className={p.status === 'active' ? 'text-green-600 font-bold' : 'text-gray-400 font-semibold'}>
-                    {p.status === 'active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                  {p.price?.toLocaleString()}₫
+                </td>
+                <td className="py-2 px-3 text-black">
+                  <span
+                    className={
+                      p.status === "active"
+                        ? "text-green-600 font-bold"
+                        : "text-gray-400 font-semibold"
+                    }
+                  >
+                    {p.status === "active"
+                      ? "Đang hoạt động"
+                      : "Ngừng hoạt động"}
                   </span>
                 </td>
                 <td className="py-2 px-3 flex gap-2">
@@ -295,7 +331,11 @@ export default function AdminProducts() {
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+              ${
+                page === 1
+                  ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white"
+              }`}
           >
             &#8592;
           </button>
@@ -304,7 +344,11 @@ export default function AdminProducts() {
               key={i + 1}
               onClick={() => setPage(i + 1)}
               className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-                ${page === i + 1 ? 'bg-[#03bb65] border-[#03bb65] text-white' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+                ${
+                  page === i + 1
+                    ? "bg-[#03bb65] border-[#03bb65] text-white"
+                    : "bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white"
+                }`}
             >
               {i + 1}
             </button>
@@ -313,20 +357,29 @@ export default function AdminProducts() {
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
             className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-              ${page === totalPages ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+              ${
+                page === totalPages
+                  ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white"
+              }`}
           >
             &#8594;
           </button>
         </div>
       )}
-      <div className="text-center text-xs text-gray-500 mt-2">Tổng số xe: {typeof total === 'number' ? total : 0}</div>
+      <div className="text-center text-xs text-gray-500 mt-2">
+        Tổng số xe: {typeof total === "number" ? total : 0}
+      </div>
 
       {showForm && (
-                  <ProductForm
-            product={editProduct}
-            onClose={() => { setShowForm(false); setEditProduct(null); }}
-            loading={formLoading}
-          />
+        <ProductForm
+          product={editProduct}
+          onClose={() => {
+            setShowForm(false);
+            setEditProduct(null);
+          }}
+          loading={formLoading}
+        />
       )}
     </>
   );
@@ -335,7 +388,7 @@ export default function AdminProducts() {
 function ProductForm({
   product,
   onClose,
-  loading
+  loading,
 }: {
   product: Product | null;
   onClose: () => void;
@@ -343,23 +396,23 @@ function ProductForm({
 }) {
   const [form, setForm] = useState<Product>(
     product || {
-      _id: '',
-      name: '',
-      manufacturer: '',
-      model: '',
+      _id: "",
+      name: "",
+      manufacturer: "",
+      model: "",
       price: 0,
-      color: '',
+      color: "",
       seats: 2,
-      fuelType: '',
-      transmission: '',
-      licensePlate: '',
-      status: 'active',
+      fuelType: "",
+      transmission: "",
+      licensePlate: "",
+      status: "active",
       year: new Date().getFullYear(),
-      description: '',
-      image: '',
-      images: { main: '', front: '', back: '', left: '', right: '' },
+      description: "",
+      image: "",
+      images: { main: "", front: "", back: "", left: "", right: "" },
       highlights: [],
-      specifications: [],
+      specifications: "",
     }
   );
   const [imageFiles, setImageFiles] = useState<{ [key: string]: File }>({});
@@ -370,9 +423,15 @@ function ProductForm({
       setForm({
         ...form,
         ...product,
-        images: product.images || { main: '', front: '', back: '', left: '', right: '' },
+        images: product.images || {
+          main: "",
+          front: "",
+          back: "",
+          left: "",
+          right: "",
+        },
         highlights: product.highlights || [],
-        specifications: product.specifications || [],
+        specifications: product.specifications || "",
       });
       // Reset imageFiles khi chuyển sang product khác
       setImageFiles({});
@@ -396,349 +455,420 @@ function ProductForm({
         {loading ? (
           <div className="text-center py-8">Đang tải dữ liệu...</div>
         ) : (
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            
-            if (product) {
-              // Update product - gửi formData với ảnh
-              const formData = new FormData();
-              
-              // Thêm các field text
-              formData.append('name', form.name);
-              formData.append('manufacturer', form.manufacturer);
-              formData.append('model', form.model);
-              formData.append('price', form.price.toString());
-              formData.append('color', form.color);
-              formData.append('seats', form.seats.toString());
-              formData.append('fuelType', form.fuelType);
-              formData.append('transmission', form.transmission);
-              formData.append('licensePlate', form.licensePlate);
-              formData.append('status', form.status);
-              formData.append('year', form.year.toString());
-              formData.append('description', form.description);
-              
-              // Thêm highlights
-              if (form.highlights) {
-                formData.append('highlights', JSON.stringify(form.highlights));
-              }
-              
-              // Thêm specifications
-              if (form.specifications) {
-                formData.append('specifications', JSON.stringify(form.specifications));
-              }
-              
-              // Thêm ảnh files
-              Object.keys(imageFiles).forEach(key => {
-                if (imageFiles[key]) {
-                  formData.append(key, imageFiles[key]);
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+
+              if (product) {
+                // Update product - gửi formData với ảnh
+                const formData = new FormData();
+
+                // Thêm các field text
+                formData.append("name", form.name);
+                formData.append("manufacturer", form.manufacturer);
+                formData.append("model", form.model);
+                formData.append("price", form.price.toString());
+                formData.append("color", form.color);
+                formData.append("seats", form.seats.toString());
+                formData.append("fuelType", form.fuelType);
+                formData.append("transmission", form.transmission);
+                formData.append("licensePlate", form.licensePlate);
+                formData.append("status", form.status);
+                formData.append("year", form.year.toString());
+                formData.append("description", form.description);
+
+                // Thêm highlights
+                if (form.highlights) {
+                  formData.append(
+                    "highlights",
+                    JSON.stringify(form.highlights)
+                  );
                 }
-              });
-              
-              try {
-                const response = await fetch(`/api/car/${product._id}`, {
-                  method: 'PUT',
-                  body: formData,
+
+                // Thêm specifications (ảnh) - không cần gửi qua formData vì sẽ upload file
+
+                // Thêm ảnh files
+                Object.keys(imageFiles).forEach((key) => {
+                  if (imageFiles[key]) {
+                    formData.append(key, imageFiles[key]);
+                  }
                 });
-                
-                if (response.ok) {
-                  await response.json();
-                  alert('Cập nhật sản phẩm thành công!');
-                  onClose();
-                  // Refresh danh sách
-                  window.location.reload();
-                } else {
-                  const error = await response.json();
-                  alert(`Lỗi: ${error.message || 'Cập nhật thất bại'}`);
+
+                try {
+                  const response = await fetch(`/api/car/${product._id}`, {
+                    method: "PUT",
+                    body: formData,
+                  });
+
+                  if (response.ok) {
+                    await response.json();
+                    alert("Cập nhật sản phẩm thành công!");
+                    onClose();
+                    // Refresh danh sách
+                    window.location.reload();
+                  } else {
+                    const error = await response.json();
+                    alert(`Lỗi: ${error.message || "Cập nhật thất bại"}`);
+                  }
+                } catch {
+                  alert("Lỗi kết nối server");
                 }
-              } catch {
-                alert('Lỗi kết nối server');
-              }
-            } else {
-              // Add new product - gửi FormData với ảnh
-              const formData = new FormData();
-              
-              // Thêm các field bắt buộc
-              formData.append('name', form.name);
-              formData.append('licensePlate', form.licensePlate);
-              formData.append('price', form.price.toString());
-              formData.append('seats', form.seats.toString());
-              formData.append('fuelType', form.fuelType);
-              formData.append('transmission', form.transmission);
-              formData.append('createdBy', '64d26e4012cfa1b40e96a001'); // ID user tạo
-              
-              // Thêm các field tùy chọn
-              if (form.manufacturer) formData.append('manufacturer', form.manufacturer);
-              if (form.model) formData.append('model', form.model);
-              if (form.color) formData.append('color', form.color);
-              if (form.year) formData.append('year', form.year.toString());
-              if (form.status) formData.append('status', form.status);
-              if (form.description) formData.append('description', form.description);
-              
-              // Thêm highlights
-              if (form.highlights && form.highlights.length > 0) {
-                formData.append('highlights', JSON.stringify(form.highlights));
-              }
-              
-              // Thêm specifications
-              if (form.specifications && form.specifications.length > 0) {
-                formData.append('specifications', JSON.stringify(form.specifications));
-              }
-              
-              // Thêm ảnh files
-              Object.keys(imageFiles).forEach(key => {
-                if (imageFiles[key]) {
-                  formData.append(key, imageFiles[key]);
+              } else {
+                // Add new product - gửi FormData với ảnh
+                const formData = new FormData();
+
+                // Thêm các field bắt buộc
+                formData.append("name", form.name);
+                formData.append("licensePlate", form.licensePlate);
+                formData.append("price", form.price.toString());
+                formData.append("seats", form.seats.toString());
+                formData.append("fuelType", form.fuelType);
+                formData.append("transmission", form.transmission);
+                formData.append("createdBy", "64d26e4012cfa1b40e96a001"); // ID user tạo
+
+                // Thêm các field tùy chọn
+                if (form.manufacturer)
+                  formData.append("manufacturer", form.manufacturer);
+                if (form.model) formData.append("model", form.model);
+                if (form.color) formData.append("color", form.color);
+                if (form.year) formData.append("year", form.year.toString());
+                if (form.status) formData.append("status", form.status);
+                if (form.description)
+                  formData.append("description", form.description);
+
+                // Thêm highlights
+                if (form.highlights && form.highlights.length > 0) {
+                  formData.append(
+                    "highlights",
+                    JSON.stringify(form.highlights)
+                  );
                 }
-              });
-              
-              try {
-                const response = await fetch('/api/car/', {
-                  method: 'POST',
-                  body: formData,
+
+                // Thêm specifications (ảnh) - không cần gửi qua formData vì sẽ upload file
+
+                // Thêm ảnh files
+                Object.keys(imageFiles).forEach((key) => {
+                  if (imageFiles[key]) {
+                    formData.append(key, imageFiles[key]);
+                  }
                 });
-                
-                if (response.ok) {
-                  await response.json();
-                  alert('Tạo sản phẩm thành công!');
-                  onClose();
-                  // Refresh danh sách
-                  window.location.reload();
-                } else {
-                  const error = await response.json();
-                  alert(`Lỗi: ${error.message || 'Tạo sản phẩm thất bại'}`);
+
+                try {
+                  const response = await fetch("/api/car/", {
+                    method: "POST",
+                    body: formData,
+                  });
+
+                  if (response.ok) {
+                    await response.json();
+                    alert("Tạo sản phẩm thành công!");
+                    onClose();
+                    // Refresh danh sách
+                    window.location.reload();
+                  } else {
+                    const error = await response.json();
+                    alert(`Lỗi: ${error.message || "Tạo sản phẩm thất bại"}`);
+                  }
+                } catch {
+                  alert("Lỗi kết nối server");
                 }
-              } catch {
-                alert('Lỗi kết nối server');
               }
-            }
-          }}
-          className="space-y-4"
-        >
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Tên xe"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Hãng (manufacturer)"
-            value={form.manufacturer}
-            onChange={(e) => setForm({ ...form, manufacturer: e.target.value })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Model"
-            value={form.model}
-            onChange={(e) => setForm({ ...form, model: e.target.value })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Biển số"
-            value={form.licensePlate}
-            onChange={(e) => setForm({ ...form, licensePlate: e.target.value })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Năm sản xuất"
-            type="number"
-            value={form.year}
-            onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Giá bán"
-            type="number"
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Màu xe"
-            value={form.color}
-            onChange={(e) => setForm({ ...form, color: e.target.value })}
-            required
-          />
-          <input
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Số chỗ"
-            type="number"
-            value={form.seats}
-            onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })}
-            required
-          />
-          <select
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            value={form.fuelType}
-            onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
-            required
+            }}
+            className="space-y-4"
           >
-            <option value="">Chọn nhiên liệu</option>
-            <option value="petrol">Xăng</option>
-            <option value="diesel">Diesel</option>
-            <option value="electric">Điện</option>
-          </select>
-          <select
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            value={form.transmission}
-            onChange={(e) => setForm({ ...form, transmission: e.target.value })}
-            required
-          >
-            <option value="">Chọn hộp số</option>
-            <option value="manual">Số sàn</option>
-            <option value="automatic">Số tự động</option>
-          </select>
-          <textarea
-            className="w-full border p-3 rounded-xl text-lg text-black"
-            placeholder="Mô tả"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            rows={3}
-          />
-          {/* 5 ảnh */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {['main', 'front', 'back', 'left', 'right'].map((key) => (
-              <div key={key} className="flex flex-col">
-                <label className="block font-medium mb-1 text-black">Ảnh {key}</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="w-full border p-2 rounded-xl text-sm text-black"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Lưu file để upload
-                      setImageFiles(prev => ({ ...prev, [key]: file }));
-                      
-                      // Tạo preview
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        const result = event.target?.result as string;
-                        setForm({ 
-                          ...form, 
-                          images: { 
-                            ...form.images, 
-                            [key]: result 
-                          } 
-                        });
-                      };
-                      reader.readAsDataURL(file);
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Tên xe"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Hãng (manufacturer)"
+              value={form.manufacturer}
+              onChange={(e) =>
+                setForm({ ...form, manufacturer: e.target.value })
+              }
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Model"
+              value={form.model}
+              onChange={(e) => setForm({ ...form, model: e.target.value })}
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Biển số"
+              value={form.licensePlate}
+              onChange={(e) =>
+                setForm({ ...form, licensePlate: e.target.value })
+              }
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Năm sản xuất"
+              type="number"
+              value={form.year}
+              onChange={(e) =>
+                setForm({ ...form, year: Number(e.target.value) })
+              }
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Giá bán"
+              type="number"
+              value={form.price}
+              onChange={(e) =>
+                setForm({ ...form, price: Number(e.target.value) })
+              }
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Màu xe"
+              value={form.color}
+              onChange={(e) => setForm({ ...form, color: e.target.value })}
+              required
+            />
+            <input
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Số chỗ"
+              type="number"
+              value={form.seats}
+              onChange={(e) =>
+                setForm({ ...form, seats: Number(e.target.value) })
+              }
+              required
+            />
+            <select
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              value={form.fuelType}
+              onChange={(e) => setForm({ ...form, fuelType: e.target.value })}
+              required
+            >
+              <option value="">Chọn nhiên liệu</option>
+              <option value="petrol">Xăng</option>
+              <option value="diesel">Diesel</option>
+              <option value="electric">Điện</option>
+            </select>
+            <select
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              value={form.transmission}
+              onChange={(e) =>
+                setForm({ ...form, transmission: e.target.value })
+              }
+              required
+            >
+              <option value="">Chọn hộp số</option>
+              <option value="manual">Số sàn</option>
+              <option value="automatic">Số tự động</option>
+            </select>
+            <textarea
+              className="w-full border p-3 rounded-xl text-lg text-black"
+              placeholder="Mô tả"
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              rows={3}
+            />
+            {/* 5 ảnh */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {["main", "front", "back", "left", "right"].map((key) => (
+                <div key={key} className="flex flex-col">
+                  <label className="block font-medium mb-1 text-black">
+                    Ảnh {key}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full border p-2 rounded-xl text-sm text-black"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        // Lưu file để upload
+                        setImageFiles((prev) => ({ ...prev, [key]: file }));
+
+                        // Tạo preview
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const result = event.target?.result as string;
+                          setForm({
+                            ...form,
+                            images: {
+                              ...form.images,
+                              [key]: result,
+                            },
+                          });
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                  />
+                  {form.images?.[key] && (
+                    <div className="mt-2">
+                      <Image
+                        src={form.images[key]}
+                        alt={key}
+                        width={120}
+                        height={80}
+                        className="rounded object-contain max-h-20 border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newImages = { ...form.images };
+                          delete newImages[key];
+                          setForm({ ...form, images: newImages });
+
+                          // Xóa file đã lưu
+                          const newImageFiles = { ...imageFiles };
+                          delete newImageFiles[key];
+                          setImageFiles(newImageFiles);
+                        }}
+                        className="text-red-500 text-xs mt-1 block"
+                      >
+                        Xóa ảnh
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {/* Đặc điểm nổi bật */}
+            <div>
+              <label className="block font-medium mb-1 text-black">
+                Đặc điểm nổi bật
+              </label>
+              {(form.highlights || []).map((h, idx) => (
+                <div key={idx} className="flex gap-2 mb-1">
+                  <input
+                    className="border p-2 rounded flex-1 text-black"
+                    placeholder="Tên đặc điểm"
+                    value={h.name}
+                    onChange={(e) => {
+                      const arr = [...(form.highlights || [])];
+                      arr[idx].name = e.target.value;
+                      setForm({ ...form, highlights: arr });
+                    }}
+                  />
+                  <input
+                    className="border p-2 rounded flex-1 text-black"
+                    placeholder="Giá trị"
+                    value={h.value}
+                    onChange={(e) => {
+                      const arr = [...(form.highlights || [])];
+                      arr[idx].value = e.target.value;
+                      setForm({ ...form, highlights: arr });
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm({
+                        ...form,
+                        highlights: (form.highlights || []).filter(
+                          (_, i) => i !== idx
+                        ),
+                      })
                     }
-                  }}
-                />
-                {form.images?.[key] && (
-                  <div className="mt-2">
-                    <Image
-                      src={form.images[key]}
-                      alt={key}
-                      width={120}
-                      height={80}
-                      className="rounded object-contain max-h-20 border"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newImages = { ...form.images };
-                        delete newImages[key];
-                        setForm({ ...form, images: newImages });
-                        
-                        // Xóa file đã lưu
-                        const newImageFiles = { ...imageFiles };
-                        delete newImageFiles[key];
-                        setImageFiles(newImageFiles);
-                      }}
-                      className="text-red-500 text-xs mt-1 block"
-                    >
-                      Xóa ảnh
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          {/* Đặc điểm nổi bật */}
-          <div>
-            <label className="block font-medium mb-1 text-black">Đặc điểm nổi bật</label>
-            {(form.highlights || []).map((h, idx) => (
-              <div key={idx} className="flex gap-2 mb-1">
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Tên đặc điểm"
-                  value={h.name}
-                  onChange={e => {
-                    const arr = [...(form.highlights || [])];
-                    arr[idx].name = e.target.value;
-                    setForm({ ...form, highlights: arr });
-                  }}
-                />
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Giá trị"
-                  value={h.value}
-                  onChange={e => {
-                    const arr = [...(form.highlights || [])];
-                    arr[idx].value = e.target.value;
-                    setForm({ ...form, highlights: arr });
-                  }}
-                />
-                <button type="button" onClick={() => setForm({ ...form, highlights: (form.highlights || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => setForm({ ...form, highlights: [...(form.highlights || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm đặc điểm</button>
-          </div>
-          {/* Thông số kỹ thuật */}
-          <div>
-            <label className="block font-medium mb-1 text-black">Thông số kỹ thuật</label>
-            {(form.specifications || []).map((s, idx) => (
-              <div key={idx} className="flex gap-2 mb-1">
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Tên thông số"
-                  value={s.name}
-                  onChange={e => {
-                    const arr = [...(form.specifications || [])];
-                    arr[idx].name = e.target.value;
-                    setForm({ ...form, specifications: arr });
-                  }}
-                />
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Giá trị"
-                  value={s.value}
-                  onChange={e => {
-                    const arr = [...(form.specifications || [])];
-                    arr[idx].value = e.target.value;
-                    setForm({ ...form, specifications: arr });
-                  }}
-                />
-                <button type="button" onClick={() => setForm({ ...form, specifications: (form.specifications || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => setForm({ ...form, specifications: [...(form.specifications || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm thông số</button>
-          </div>
-          <div className="flex gap-4 mt-4">
-            <button
-              type="submit"
-              className="flex-1 bg-[#b8001c] text-white font-bold py-3 rounded-xl hover:bg-black transition"
-            >
-              {product ? "Cập nhật" : "Thêm mới"}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 bg-gray-200 text-[#b8001c] font-bold py-3 rounded-xl hover:bg-gray-300 transition"
-            >
-              Huỷ
-            </button>
-          </div>
-        </form>
+                    className="text-red-500"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    highlights: [
+                      ...(form.highlights || []),
+                      { name: "", value: "" },
+                    ],
+                  })
+                }
+                className="text-[#03bb65] font-bold mt-1"
+              >
+                + Thêm đặc điểm
+              </button>
+            </div>
+            {/* Thông số kỹ thuật - Ảnh */}
+            <div>
+              <label className="block font-medium mb-1 text-black">
+                Ảnh thông số kỹ thuật
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full border p-2 rounded-xl text-sm text-black"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    // Lưu file để upload
+                    setImageFiles((prev) => ({
+                      ...prev,
+                      specifications: file,
+                    }));
+
+                    // Tạo preview
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      const result = event.target?.result as string;
+                      setForm({ ...form, specifications: result });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+              {form.specifications && (
+                <div className="mt-2">
+                  <Image
+                    src={form.specifications}
+                    alt="Thông số kỹ thuật"
+                    width={200}
+                    height={150}
+                    className="rounded object-contain max-h-32 border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm({ ...form, specifications: "" });
+
+                      // Xóa file đã lưu
+                      const newImageFiles = { ...imageFiles };
+                      delete newImageFiles.specifications;
+                      setImageFiles(newImageFiles);
+                    }}
+                    className="text-red-500 text-xs mt-1 block"
+                  >
+                    Xóa ảnh
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-4 mt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-[#b8001c] text-white font-bold py-3 rounded-xl hover:bg-black transition"
+              >
+                {product ? "Cập nhật" : "Thêm mới"}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 bg-gray-200 text-[#b8001c] font-bold py-3 rounded-xl hover:bg-gray-300 transition"
+              >
+                Huỷ
+              </button>
+            </div>
+          </form>
         )}
       </div>
     </div>
