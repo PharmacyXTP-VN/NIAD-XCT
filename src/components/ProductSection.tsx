@@ -171,7 +171,7 @@ export default function ProductSection() {
               </div>
               {/* Right - Image + Info */}
               <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 bg-[#e6f9f0] skew-x-[-12deg] origin-left z-0 rounded-2xl border-2 border-[#03bb65]" />
+                <div className="absolute inset-0 bg-[#e6f9f0] z-0 rounded-2xl border-2 border-[#03bb65]" />
                 {/* ChevronLeft button bên trái khung ảnh */}
                 <button
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition z-20"
