@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import React from "react"; // Added for React.useEffect
+import dynamic from "next/dynamic";
+
+// Dynamic import CKEditor to avoid SSR issues
+const CKEditorWrapper = dynamic(
+  () => import('../news/CKEditorWrapper'),
+  { ssr: false }
+);
 
 // Định nghĩa kiểu Product cho đúng với backend
 interface Product {
@@ -20,9 +27,17 @@ interface Product {
   year: number;
   description: string;
   image: string;
-  images?: { [key: string]: string };
-  highlights?: { name: string; value: string }[];
-  specifications?: { name: string; value: string }[];
+  images?: {
+    main?: string;
+    gallery?: string[];
+    front?: string;
+    back?: string;
+    left?: string;
+    right?: string;
+    [key: string]: string | string[] | undefined;
+  };
+  highlightFeatures?: string; // HTML content from CKEditor
+  specifications?: string; // Changed from array to string (URL to image)
 }
 
 export default function AdminProducts() {
@@ -153,6 +168,29 @@ export default function AdminProducts() {
       const res = await fetch(`/api/car/${product._id}`);
       const data = await res.json();
       if (data && data.data) {
+        // Create a properly initialized images object with default values
+        const images = {
+          main: "",
+          gallery: [] as string[],
+          ...(data.data.images || {})
+        };
+        
+        // Ensure gallery exists and is an array
+        if (!Array.isArray(images.gallery)) {
+          images.gallery = [];
+        }
+        
+        // Convert old model (front, back, left, right) to gallery array and remove old properties
+        ['front', 'back', 'left', 'right'].forEach(key => {
+          const imageKey = key as keyof typeof images;
+          const value = images[imageKey];
+          if (typeof value === 'string' && value && !images.gallery.includes(value)) {
+            images.gallery.push(value);
+            // Remove old property after adding to gallery
+            delete images[imageKey];
+          }
+        });
+        
         setEditProduct({
           _id: data.data._id,
           name: data.data.name,
@@ -168,9 +206,9 @@ export default function AdminProducts() {
           year: data.data.year,
           description: data.data.description,
           image: data.data.images?.main || '',
-          images: data.data.images || {},
-          highlights: data.data.highlights || [],
-          specifications: data.data.specifications || [],
+          images: images,
+          highlightFeatures: data.data.highlightFeatures || '',
+          specifications: data.data.specifications || '',
         });
       }
     } catch {
@@ -188,13 +226,13 @@ export default function AdminProducts() {
   return (
     <>
       <section className="mb-8">
-        <div className="bg-gradient-to-r from-[#b8001c] to-[#1a1a1a] text-white rounded-3xl shadow-xl p-8 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#006b68] to-[#1a1a1a] text-white rounded-3xl shadow-xl p-8 flex items-center justify-between">
           <h1 className="text-3xl font-extrabold uppercase tracking-wide drop-shadow">
             Quản lý sản phẩm
           </h1>
           <button
             onClick={handleAdd}
-            className="bg-white text-[#b8001c] font-bold px-6 py-2 rounded-xl shadow hover:bg-[#b8001c] hover:text-white transition"
+            className="bg-white text-[#006b68] font-bold px-6 py-2 rounded-xl shadow hover:bg-[#006b68] hover:text-white transition"
           >
             + Thêm sản phẩm
           </button>
@@ -202,13 +240,13 @@ export default function AdminProducts() {
         {loading && (
           <div className="mt-4 text-blue-600 font-bold">Đang xử lý...</div>
         )}
-        {error && <div className="mt-4 text-red-600 font-bold">{error}</div>}
+        {error && <div className="mt-4 text-[#006b68] font-bold">{error}</div>}
       </section>
       <div className="flex flex-wrap gap-4 justify-center mb-6">
         {brands.map((brand) => (
           <button
             key={brand}
-            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#03bb65] text-white border-[#03bb65]" : "bg-white text-[#03bb65] border-[#03bb65]"}`}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#006b68] text-white border-[#006b68]" : "bg-white text-[#006b68] border-[#006b68]"}`}
             onClick={() => {
               setActiveBrand(brand);
               // Lấy model đầu tiên của brand này và set luôn
@@ -226,7 +264,7 @@ export default function AdminProducts() {
         {categories.map((cat) => (
           <button
             key={cat}
-            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#17877b] text-white border-[#17877b]" : "bg-white text-[#17877b] border-[#17877b]"}`}
+            className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#006b68] text-white border-[#006b68]" : "bg-white text-[#006b68] border-[#006b68]"}`}
             onClick={() => setActiveCategory(cat)}
           >
             {cat}
@@ -236,7 +274,7 @@ export default function AdminProducts() {
       <div className="bg-white rounded-2xl shadow p-6 overflow-x-auto">
         <table className="min-w-full text-left">
           <thead>
-            <tr className="text-[#b8001c] text-lg">
+            <tr className="text-[#006b68] text-lg">
               <th className="py-2 px-3">Ảnh</th>
               <th className="py-2 px-3">Tên xe</th>
               <th className="py-2 px-3">Hãng</th>
@@ -272,13 +310,13 @@ export default function AdminProducts() {
                 <td className="py-2 px-3 flex gap-2">
                   <button
                     onClick={() => handleEdit(p)}
-                    className="px-3 py-1 rounded bg-[#b8001c] text-white font-bold hover:bg-black transition"
+                    className="px-3 py-1 rounded bg-[#006b68] text-white font-bold hover:bg-black transition"
                   >
                     Sửa
                   </button>
                   <button
                     onClick={() => handleDelete(p._id)}
-                    className="px-3 py-1 rounded bg-gray-200 text-[#b8001c] font-bold hover:bg-red-100 transition"
+                    className="px-3 py-1 rounded bg-gray-200 text-[#006b68] font-bold hover:bg-gray-300 transition"
                   >
                     Xoá
                   </button>
@@ -295,7 +333,7 @@ export default function AdminProducts() {
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#006b68] text-[#006b68] hover:bg-[#006b68] hover:text-white'}`}
           >
             &#8592;
           </button>
@@ -304,7 +342,7 @@ export default function AdminProducts() {
               key={i + 1}
               onClick={() => setPage(i + 1)}
               className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-                ${page === i + 1 ? 'bg-[#03bb65] border-[#03bb65] text-white' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+                ${page === i + 1 ? 'bg-[#006b68] border-[#006b68] text-white' : 'bg-white border-[#006b68] text-[#006b68] hover:bg-[#006b68] hover:text-white'}`}
             >
               {i + 1}
             </button>
@@ -357,22 +395,70 @@ function ProductForm({
       year: new Date().getFullYear(),
       description: '',
       image: '',
-      images: { main: '', front: '', back: '', left: '', right: '' },
-      highlights: [],
-      specifications: [],
+      images: { main: '', gallery: [] },
+      highlightFeatures: '',
+      specifications: '',
     }
   );
-  const [imageFiles, setImageFiles] = useState<{ [key: string]: File }>({});
+  const [imageFiles, setImageFiles] = useState<{
+    main?: File;
+    gallery?: File[];
+    specifications?: File;
+    [key: string]: File | File[] | undefined;
+  }>({});
 
   // Đồng bộ form với product mỗi khi product thay đổi
   React.useEffect(() => {
     if (product) {
+      // Đảm bảo specifications luôn là chuỗi
+      let specValue = '';
+      if (product.specifications) {
+        specValue = typeof product.specifications === 'string' 
+          ? product.specifications 
+          : '';
+      }
+      
+      // Xử lý images để phù hợp với mô hình gallery mới
+      const images: Product['images'] = {
+        main: "",
+        gallery: [],
+        ...(product.images || {})
+      };
+      
+      // Đảm bảo images.main tồn tại
+      if (!images.main) images.main = '';
+      
+      // Đảm bảo gallery là một mảng và đồng thời chuyển các ảnh cũ vào gallery nếu chưa có trong gallery
+      if (!Array.isArray(images.gallery)) {
+        images.gallery = [];
+      }
+      
+      // Lưu tham chiếu đến gallery array đã được đảm bảo là mảng
+      const galleryArray = images.gallery;
+      
+      // Convert old model (front, back, left, right) to gallery array if they exist
+      // and aren't already in the gallery array
+      ['front', 'back', 'left', 'right'].forEach(key => {
+        const value = product.images?.[key];
+        if (typeof value === 'string' && value && !galleryArray.includes(value)) {
+          galleryArray.push(value);
+          
+          // Remove old property after adding to gallery
+          if (images) {
+            const imageKey = key as keyof typeof images;
+            if (imageKey in images) {
+              delete images[imageKey];
+            }
+          }
+        }
+      });
+      
       setForm({
         ...form,
         ...product,
-        images: product.images || { main: '', front: '', back: '', left: '', right: '' },
-        highlights: product.highlights || [],
-        specifications: product.specifications || [],
+        images: images,
+        highlightFeatures: product.highlightFeatures || '',
+        specifications: specValue,
       });
       // Reset imageFiles khi chuyển sang product khác
       setImageFiles({});
@@ -418,22 +504,27 @@ function ProductForm({
               formData.append('year', form.year.toString());
               formData.append('description', form.description);
               
-              // Thêm highlights
-              if (form.highlights) {
-                formData.append('highlights', JSON.stringify(form.highlights));
+              // Thêm highlightFeatures (CKEditor content)
+              if (form.highlightFeatures) {
+                formData.append('highlightFeatures', form.highlightFeatures);
               }
               
-              // Thêm specifications
-              if (form.specifications) {
-                formData.append('specifications', JSON.stringify(form.specifications));
+              // Thêm specifications (nếu là string URL và không có file mới)
+              if (form.specifications && typeof form.specifications === 'string' && !imageFiles.specifications) {
+                formData.append('specificationsUrl', form.specifications);
               }
               
-              // Thêm ảnh files
-              Object.keys(imageFiles).forEach(key => {
-                if (imageFiles[key]) {
-                  formData.append(key, imageFiles[key]);
-                }
-              });
+              // Thêm ảnh main
+              if (imageFiles.main) {
+                formData.append('main', imageFiles.main);
+              }
+              
+              // Thêm ảnh gallery
+              if (imageFiles.gallery && Array.isArray(imageFiles.gallery)) {
+                imageFiles.gallery.forEach(file => {
+                  formData.append('gallery', file);
+                });
+              }
               
               try {
                 const response = await fetch(`/api/car/${product._id}`, {
@@ -475,22 +566,27 @@ function ProductForm({
               if (form.status) formData.append('status', form.status);
               if (form.description) formData.append('description', form.description);
               
-              // Thêm highlights
-              if (form.highlights && form.highlights.length > 0) {
-                formData.append('highlights', JSON.stringify(form.highlights));
+              // Thêm highlightFeatures (CKEditor content)
+              if (form.highlightFeatures) {
+                formData.append('highlightFeatures', form.highlightFeatures);
               }
               
-              // Thêm specifications
-              if (form.specifications && form.specifications.length > 0) {
-                formData.append('specifications', JSON.stringify(form.specifications));
+              // Thêm specifications (nếu là string URL và không có file mới)
+              if (form.specifications && typeof form.specifications === 'string' && !imageFiles.specifications) {
+                formData.append('specificationsUrl', form.specifications);
               }
               
-              // Thêm ảnh files
-              Object.keys(imageFiles).forEach(key => {
-                if (imageFiles[key]) {
-                  formData.append(key, imageFiles[key]);
-                }
-              });
+              // Thêm ảnh main
+              if (imageFiles.main) {
+                formData.append('main', imageFiles.main);
+              }
+              
+              // Thêm ảnh gallery
+              if (imageFiles.gallery && Array.isArray(imageFiles.gallery)) {
+                imageFiles.gallery.forEach(file => {
+                  formData.append('gallery', file);
+                });
+              }
               
               try {
                 const response = await fetch('/api/car/', {
@@ -602,126 +698,246 @@ function ProductForm({
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             rows={3}
           />
-          {/* 5 ảnh */}
+          {/* Ảnh chính và gallery */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {['main', 'front', 'back', 'left', 'right'].map((key) => (
-              <div key={key} className="flex flex-col">
-                <label className="block font-medium mb-1 text-black">Ảnh {key}</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="w-full border p-2 rounded-xl text-sm text-black"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Lưu file để upload
-                      setImageFiles(prev => ({ ...prev, [key]: file }));
+            {/* Ảnh chính */}
+            <div className="flex flex-col">
+              <label className="block font-medium mb-1 text-black">Ảnh chính</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="w-full border p-2 rounded-xl text-sm text-black"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    // Lưu file để upload
+                    setImageFiles(prev => ({ ...prev, main: file }));
+                    
+                    // Tạo preview
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      const result = event.target?.result as string;
+                      setForm({ 
+                        ...form, 
+                        images: { 
+                          ...(form.images || {}), 
+                          main: result 
+                        } 
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+              {form.images?.main && (
+                <div className="mt-2">
+                  <Image
+                    src={form.images.main}
+                    alt="Ảnh chính"
+                    width={120}
+                    height={80}
+                    className="rounded object-contain max-h-20 border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newImages = { ...(form.images || {}) };
+                      delete newImages.main;
+                      setForm({ ...form, images: newImages });
                       
-                      // Tạo preview
+                      // Xóa file đã lưu
+                      const newImageFiles = { ...imageFiles };
+                      delete newImageFiles.main;
+                      setImageFiles(newImageFiles);
+                    }}
+                    className="text-red-500 text-xs mt-1 block"
+                  >
+                    Xóa ảnh
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Gallery (nhiều ảnh) */}
+            <div className="flex flex-col">
+              <label className="block font-medium mb-1 text-black">Ảnh gallery (nhiều ảnh)</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="w-full border p-2 rounded-xl text-sm text-black"
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) {
+                    // Lưu files để upload
+                    const newGalleryFiles: File[] = [...(imageFiles.gallery || [])];
+                    for (let i = 0; i < files.length; i++) {
+                      newGalleryFiles.push(files[i]);
+                    }
+                    setImageFiles(prev => ({ ...prev, gallery: newGalleryFiles }));
+                    
+                    // Tạo previews
+                    const newGalleryPreviews: string[] = [...(form.images?.gallery || [])];
+                    Array.from(files).forEach(file => {
                       const reader = new FileReader();
                       reader.onload = (event) => {
                         const result = event.target?.result as string;
+                        newGalleryPreviews.push(result);
                         setForm({ 
                           ...form, 
                           images: { 
-                            ...form.images, 
-                            [key]: result 
+                            ...(form.images || {}), 
+                            gallery: newGalleryPreviews 
                           } 
                         });
                       };
                       reader.readAsDataURL(file);
-                    }
-                  }}
-                />
-                {form.images?.[key] && (
-                  <div className="mt-2">
-                    <Image
-                      src={form.images[key]}
-                      alt={key}
-                      width={120}
-                      height={80}
-                      className="rounded object-contain max-h-20 border"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newImages = { ...form.images };
-                        delete newImages[key];
-                        setForm({ ...form, images: newImages });
-                        
-                        // Xóa file đã lưu
-                        const newImageFiles = { ...imageFiles };
-                        delete newImageFiles[key];
-                        setImageFiles(newImageFiles);
-                      }}
-                      className="text-red-500 text-xs mt-1 block"
-                    >
-                      Xóa ảnh
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+                    });
+                  }
+                }}
+              />
+              {form.images?.gallery && Array.isArray(form.images?.gallery) && form.images?.gallery.length > 0 && (
+                <div className="mt-2 grid grid-cols-3 gap-2">
+                  {form.images?.gallery.map((img: string, idx: number) => (
+                    <div key={idx} className="relative">
+                      <Image
+                        src={img}
+                        alt={`Gallery ${idx}`}
+                        width={100}
+                        height={80}
+                        className="rounded object-contain h-20 w-full border"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          // Nếu đang chỉnh sửa sản phẩm có ID và ảnh không phải là file mới
+                          if (product && product._id && typeof img === 'string' && !img.startsWith('data:')) {
+                            // Tạo bản sao của gallery và xóa ảnh tại vị trí idx
+                            const currentGallery = form.images?.gallery || [];
+                            const newGallery = [...currentGallery];
+                            newGallery.splice(idx, 1);
+                            
+                            try {
+                              // Cập nhật state để UI phản hồi ngay lập tức
+                              setForm({
+                                ...form,
+                                images: {
+                                  ...(form.images || {}),
+                                  gallery: newGallery
+                                }
+                              });
+                              
+                              // Gọi API để cập nhật gallery trong database
+                              const response = await fetch(`/api/car/gallery-update/${product._id}`, {
+                                method: 'PUT',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ gallery: newGallery }),
+                              });
+                              
+                              if (!response.ok) {
+                                // Nếu API call thất bại, khôi phục state
+                                const error = await response.json();
+                                alert(`Lỗi khi xóa ảnh: ${error.message || 'Không thể xóa ảnh'}`);
+                                // Khôi phục state
+                                setForm({
+                                  ...form,
+                                  images: {
+                                    ...(form.images || {}),
+                                    gallery: currentGallery
+                                  }
+                                });
+                              }
+                            } catch (error) {
+                              console.error('Lỗi khi cập nhật gallery:', error);
+                              alert('Không thể kết nối đến server để xóa ảnh');
+                            }
+                          } else {
+                            // Nếu đang tạo mới hoặc ảnh là file mới (chưa upload)
+                            const currentGallery = form.images?.gallery || [];
+                            const newGallery = [...currentGallery];
+                            newGallery.splice(idx, 1);
+                            setForm({
+                              ...form,
+                              images: {
+                                ...(form.images || {}),
+                                gallery: newGallery
+                              }
+                            });
+                            
+                            // Xóa file đã lưu trong state (chưa upload)
+                            if (imageFiles.gallery) {
+                              const newGalleryFiles = [...imageFiles.gallery];
+                              newGalleryFiles.splice(idx, 1);
+                              setImageFiles({
+                                ...imageFiles,
+                                gallery: newGalleryFiles
+                              });
+                            }
+                          }
+                        }}
+                        className="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          {/* Đặc điểm nổi bật */}
+          {/* Đặc điểm nổi bật (CKEditor) */}
           <div>
             <label className="block font-medium mb-1 text-black">Đặc điểm nổi bật</label>
-            {(form.highlights || []).map((h, idx) => (
-              <div key={idx} className="flex gap-2 mb-1">
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Tên đặc điểm"
-                  value={h.name}
-                  onChange={e => {
-                    const arr = [...(form.highlights || [])];
-                    arr[idx].name = e.target.value;
-                    setForm({ ...form, highlights: arr });
-                  }}
-                />
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Giá trị"
-                  value={h.value}
-                  onChange={e => {
-                    const arr = [...(form.highlights || [])];
-                    arr[idx].value = e.target.value;
-                    setForm({ ...form, highlights: arr });
-                  }}
-                />
-                <button type="button" onClick={() => setForm({ ...form, highlights: (form.highlights || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => setForm({ ...form, highlights: [...(form.highlights || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm đặc điểm</button>
+            <div className="border rounded">
+              <CKEditorWrapper
+                data={form.highlightFeatures || ''}
+                onChange={(data: string) => {
+                  setForm({ ...form, highlightFeatures: data });
+                }}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Sử dụng trình soạn thảo này để nhập nội dung cho đặc điểm nổi bật. Hỗ trợ định dạng văn bản phong phú.</p>
           </div>
+          
           {/* Thông số kỹ thuật */}
           <div>
-            <label className="block font-medium mb-1 text-black">Thông số kỹ thuật</label>
-            {(form.specifications || []).map((s, idx) => (
-              <div key={idx} className="flex gap-2 mb-1">
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Tên thông số"
-                  value={s.name}
-                  onChange={e => {
-                    const arr = [...(form.specifications || [])];
-                    arr[idx].name = e.target.value;
-                    setForm({ ...form, specifications: arr });
-                  }}
-                />
-                <input
-                  className="border p-2 rounded flex-1 text-black"
-                  placeholder="Giá trị"
-                  value={s.value}
-                  onChange={e => {
-                    const arr = [...(form.specifications || [])];
-                    arr[idx].value = e.target.value;
-                    setForm({ ...form, specifications: arr });
-                  }}
-                />
-                <button type="button" onClick={() => setForm({ ...form, specifications: (form.specifications || []).filter((_, i) => i !== idx) })} className="text-red-500">X</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => setForm({ ...form, specifications: [...(form.specifications || []), { name: '', value: '' }] })} className="text-[#03bb65] font-bold mt-1">+ Thêm thông số</button>
+            <label className="block font-medium mb-1 text-black">Thông số kỹ thuật (Ảnh A4)</label>
+            <div className="flex gap-2 items-center">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setImageFiles({
+                      ...imageFiles,
+                      specifications: e.target.files[0]
+                    });
+                  }
+                }}
+                className="border p-2 rounded text-sm text-black"
+              />
+              {form.specifications && typeof form.specifications === 'string' && form.specifications.startsWith('http') && (
+                <div className="flex items-center">
+                  <Image 
+                    src={form.specifications} 
+                    alt="Thông số kỹ thuật" 
+                    width={48}
+                    height={48}
+                    className="h-12 w-auto object-contain" 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setForm({ ...form, specifications: '' })}
+                    className="ml-2 text-red-500"
+                  >
+                    X
+                  </button>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Tải lên ảnh A4 chụp thông số kỹ thuật của xe</p>
           </div>
           <div className="flex gap-4 mt-4">
             <button

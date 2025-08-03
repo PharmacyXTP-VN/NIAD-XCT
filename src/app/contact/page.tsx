@@ -1,30 +1,23 @@
 "use client";
 
 import DefaultLayout from "@/layout/DefaultLayout";
-import Image from "next/image";
+import PageBanner from "@/components/PageBanner";
 
 export default function ContactPage() {
   return (
     <DefaultLayout>
       {/* Banner Section */}
-      <section className="relative bg-gradient-to-r from-[#17877b] to-[#7ee8c7] text-white py-20 overflow-hidden mb-0">
-        <div className="absolute inset-0 opacity-20 bg-[url('/images/cars/test2-removebg-preview.png')] bg-no-repeat bg-right bg-contain pointer-events-none" />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center flex flex-col items-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-lg">
-            Liên hệ với NIAD
-          </h1>
-          <p className="text-2xl md:text-3xl text-[#e6f9f5] max-w-2xl mx-auto font-medium mb-6">
-            Đội ngũ NIAD luôn sẵn sàng hỗ trợ bạn 24/7 về sản phẩm, dịch vụ, hợp
-            tác và tư vấn giải pháp vận chuyển an toàn.
-          </p>
-        </div>
-      </section>
+      <PageBanner 
+        pageName="contact" 
+        title="Liên hệ với NIAD" 
+        subtitle="Đội ngũ NIAD luôn sẵn sàng hỗ trợ bạn 24/7 về sản phẩm, dịch vụ, hợp tác và tư vấn giải pháp vận chuyển an toàn."
+      />
       <div className="min-h-screen bg-[#f7f7fa]">
         {/* Contact Form & Info */}
         <div className="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Form */}
           <form className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 flex flex-col gap-5">
-            <h2 className="text-2xl font-bold text-[#17877b] mb-2">
+            <h2 className="text-2xl font-bold text-[#006b68] mb-2">
               Gửi yêu cầu tư vấn
             </h2>
             <input
@@ -52,7 +45,7 @@ export default function ContactPage() {
             />
             <button
               type="submit"
-              className="mt-2 bg-[#22bfa2] text-white font-bold rounded-full py-3 text-lg shadow hover:bg-[#17877b] transition-colors duration-200"
+              className="mt-2 bg-[#006b68] text-white font-bold rounded-full py-3 text-lg shadow hover:bg-[#006c67] transition-colors duration-200"
             >
               Gửi liên hệ
             </button>
@@ -60,7 +53,7 @@ export default function ContactPage() {
           {/* Info */}
           <div className="flex flex-col gap-8 items-center md:items-start max-w-3xl pt-15">
             <div className="flex flex-col gap-2">
-              <h3 className="text-xl font-bold text-[#17877b] mb-2">
+              <h3 className="text-xl font-bold text-[#006b68] mb-2">
                 Thông tin liên hệ
               </h3>
               <div className="text-gray-800 text-base">
@@ -73,7 +66,7 @@ export default function ContactPage() {
                   <span className="font-semibold">Hotline:</span>{" "}
                   <a
                     href="tel: 024 730 44 688"
-                    className="text-[#17877b] font-semibold hover:underline"
+                    className="text-[#006b68] font-semibold hover:underline"
                   >
                     024 730 44 688
                   </a>
@@ -82,7 +75,7 @@ export default function ContactPage() {
                   <span className="font-semibold">Email:</span>{" "}
                   <a
                     href="mailto:taisan@nganluc.vn"
-                    className="text-[#17877b] font-semibold hover:underline"
+                    className="text-[#006b68] font-semibold hover:underline"
                   >
                     taisan@nganluc.vn
                   </a>
@@ -91,7 +84,7 @@ export default function ContactPage() {
                   <span className="font-semibold">Website:</span>{" "}
                   <a
                     href="https://nganluc.vn"
-                    className="text-[#17877b] font-semibold hover:underline"
+                    className="text-[#006b68] font-semibold hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -150,15 +143,7 @@ export default function ContactPage() {
                 </a>
               </div>
             </div>
-            <div className="w-full rounded-2xl overflow-hidden mt-4">
-              <Image
-                src="/images/banners/test2.png"
-                alt="NIAD Contact Map"
-                width={480}
-                height={220}
-                className="w-full h-55 object-cover"
-              />
-            </div>
+           
           </div>
         </div>
       </div>

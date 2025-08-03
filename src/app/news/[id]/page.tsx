@@ -31,7 +31,7 @@ export default function NewsDetailPage() {
     <DefaultLayout>
       <div className="bg-[#f0f2f5] min-h-screen">
         {/* Banner lớn */}
-        <section className="relative bg-gradient-to-r from-[#17877b] to-[#7ee8c7] text-white py-16 md:py-24 overflow-hidden mb-8">
+        <section className="relative bg-gradient-to-r from-[#006b68] to-[#e6f9f0] text-white py-16 md:py-24 overflow-hidden mb-8">
           <div className="absolute inset-0 opacity-20 bg-[url('/images/news/test2.png')] bg-no-repeat bg-right bg-contain pointer-events-none" />
           <div className="relative z-10 max-w-4xl mx-auto px-4 flex flex-col items-center text-center">
             <Image
@@ -48,11 +48,11 @@ export default function NewsDetailPage() {
               {news.summary}
             </h2>
             <div className="flex flex-wrap gap-3 justify-center items-center mb-2">
-              <span className="text-xs md:text-sm text-gray-200 bg-[#17877b] px-3 py-1 rounded-full shadow">
+              <span className="text-xs md:text-sm text-gray-200 bg-[#006b68] px-3 py-1 rounded-full shadow">
                 {news.publishedAt ? new Date(news.publishedAt).toLocaleDateString() : ''}
               </span>
               {news.tags && news.tags.length > 0 && news.tags.map((tag: string) => (
-                <span key={tag} className="bg-white/80 text-[#17877b] px-3 py-1 rounded-full text-xs md:text-sm font-semibold shadow">
+                <span key={tag} className="bg-white/80 text-[#006b68] px-3 py-1 rounded-full text-xs md:text-sm font-semibold shadow">
                   #{tag}
                 </span>
               ))}

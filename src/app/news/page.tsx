@@ -37,13 +37,13 @@ export default function NewsPage() {
 			{/* Banner lớn */}
 			<section className="relative bg-[#f5f7fa] py-8 border-b border-gray-200">
 				{/* Lớp phủ màu xanh */}
-				<div className="absolute inset-0 bg-gradient-to-r from-[#17877b]/80 to-[#7ee8c7]/80 opacity-80 pointer-events-none z-0" />
+				<div className="absolute inset-0 bg-gradient-to-r from-[#006b68]/80 to-[#e6f9f0]/80 opacity-80 pointer-events-none z-0" />
 				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 px-4 relative z-10">
 					<div className="flex-1 flex flex-col justify-center">
 						{bannerNews ? (
 							<>
 								<Link href={`/news/${bannerNews._id}`}>
-									<h1 className="text-4xl md:text-5xl font-extrabold text-[#222] mb-4 leading-tight uppercase drop-shadow-lg cursor-pointer hover:text-[#17877b]">
+									<h1 className="text-4xl md:text-5xl font-extrabold text-[#222] mb-4 leading-tight uppercase drop-shadow-lg cursor-pointer hover:text-[#006b68]">
 										{bannerNews.title}
 									</h1>
 								</Link>
@@ -93,7 +93,7 @@ export default function NewsPage() {
 					<div className="w-full flex flex-col lg:flex-row gap-8">
 						{/* Cột 1: Xem nhiều */}
 						<div className="w-full lg:w-1/2 flex flex-col gap-6">
-							<h2 className="text-2xl font-bold text-[#17877b] mb-2 uppercase">Xem nhiều</h2>
+							<h2 className="text-2xl font-bold text-[#006b68] mb-2 uppercase">Xem nhiều</h2>
 							<div className="flex flex-col gap-4">
 								{newsPopular.length === 0 ? (
 									<div>Không có tin tức.</div>
@@ -127,7 +127,7 @@ export default function NewsPage() {
 						</div>
 						{/* Cột 2: Tin mới */}
 						<div className="w-full lg:w-1/2 flex flex-col gap-6">
-							<h2 className="text-2xl font-bold text-[#17877b] mb-2 uppercase">Tin mới</h2>
+							<h2 className="text-2xl font-bold text-[#006b68] mb-2 uppercase">Tin mới</h2>
 							{/* Tin mới lớn */}
 							{newsLatest.length === 0 ? (
 								<div>Không có tin tức.</div>

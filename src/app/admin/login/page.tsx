@@ -22,8 +22,12 @@ export default function LoginAdminPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        // Lưu user info vào localStorage hoặc cookie nếu cần
+        // Lưu user info vào localStorage
         localStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Set authentication cookie
+        document.cookie = "admin_auth=true; path=/; max-age=86400"; // 24 hours
+        
         // Chuyển hướng vào dashboard
         router.push("/admin/dashboard");
       } else {
@@ -37,19 +41,19 @@ export default function LoginAdminPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#b8001c] via-black to-white">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#006b68] via-black to-white">
       <div className="max-w-md w-full bg-white/90 shadow-2xl rounded-3xl p-8">
-        <h2 className="text-3xl font-extrabold text-center mb-6 text-[#b8001c] drop-shadow">
+        <h2 className="text-3xl font-extrabold text-center mb-6 text-[#006b68] drop-shadow">
           Đăng nhập Admin
         </h2>
         {error && (
-          <p className="text-red-600 text-center mb-4 font-semibold">{error}</p>
+          <p className="text-[#006b68] text-center mb-4 font-semibold">{error}</p>
         )}
         <form onSubmit={handleLogin} className="space-y-6">
           <input
             type="text"
             placeholder="Tài khoản"
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#b8001c] text-lg text-black placeholder:text-gray-400"
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006b68] text-lg text-black placeholder:text-gray-400"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoFocus
@@ -57,13 +61,13 @@ export default function LoginAdminPage() {
           <input
             type="password"
             placeholder="Mật khẩu"
-            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#b8001c] text-lg text-black placeholder:text-gray-400"
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#006b68] text-lg text-black placeholder:text-gray-400"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#b8001c] to-black text-white py-3 rounded-xl font-bold text-lg shadow hover:scale-105 transition"
+            className="w-full bg-gradient-to-r from-[#006b68] to-black text-white py-3 rounded-xl font-bold text-lg shadow hover:scale-105 transition"
             disabled={loading}
           >
             {loading ? "Đang đăng nhập..." : "Đăng nhập"}

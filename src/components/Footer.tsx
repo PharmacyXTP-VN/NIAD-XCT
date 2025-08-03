@@ -7,14 +7,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-[#17877b] to-[#22bfa2] text-white pt-8 pb-4">
+    <footer className="bg-[#006b68] text-white pt-8 pb-4">
       <div className="max-w-7xl mx-auto px-4">
         {/* Logo, Company Name and Map */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:space-x-4 mb-8">
           {/* Logo and Company Name */}
           <div className="flex items-center space-x-4 mb-6 lg:mb-0">
             <Image
-              src="/images/logo-niad/logo-nias.png"
+              src="/images/logo-niad/logo-niad-white.png"
               alt="NIAD Logo"
               className="w-[160px] h-[60px] object-contain flex-shrink-0"
               width={160}

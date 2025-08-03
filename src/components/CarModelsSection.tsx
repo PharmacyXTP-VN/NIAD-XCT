@@ -111,7 +111,7 @@ export default function XeChoTienSection() {
 			<div className="max-w-7xl mx-auto px-4">
 				<h2 className="text-center font-extrabold text-3xl md:text-5xl mb-2 tracking-tight drop-shadow-lg leading-tight">
 					<span className="text-[#1d1d1f]">ƯU ĐIỂM</span>
-					<span className="text-[#03bb65]"> VƯỢT TRỘI</span>
+					<span className="text-[#006b68]"> VƯỢT TRỘI</span>
 				</h2>
 				<p className="text-center text-[#6e6e73] text-base md:text-lg mb-8 font-medium max-w-2xl mx-auto">
 					Những lý do khiến xe chở tiền NIAD là lựa chọn hàng đầu cho ngân hàng và doanh nghiệp vận chuyển giá trị cao.
@@ -140,7 +140,7 @@ export default function XeChoTienSection() {
 								</div>
 								{/* Overlay nội dung khi hover */}
 								<div className="absolute inset-0 bg-black bg-opacity-70 text-white p-6 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center items-center">
-									<h3 className="text-lg font-bold mb-2 text-[#03bb65] text-center">
+									<h3 className="text-lg font-bold mb-2 text-[#006b68] text-center">
 										{xeChoTienFeatures[idx % xeChoTienFeatures.length].title}
 									</h3>
 									<p className="text-sm text-center">

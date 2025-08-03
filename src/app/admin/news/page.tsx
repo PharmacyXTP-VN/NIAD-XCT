@@ -156,11 +156,11 @@ export default function AdminNews() {
   return (
     <> 
       <section className="mb-8">
-        <div className="bg-gradient-to-r from-[#b8001c] to-[#1a1a1a] text-white rounded-3xl shadow-xl p-8 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#006b68] to-[#1a1a1a] text-white rounded-3xl shadow-xl p-8 flex items-center justify-between">
           <h1 className="text-3xl font-extrabold uppercase tracking-wide drop-shadow">Quản lý tin tức</h1>
           <button
             onClick={handleAdd}
-            className="bg-white text-[#b8001c] font-bold px-6 py-2 rounded-xl shadow hover:bg-[#b8001c] hover:text-white transition"
+            className="bg-white text-[#006b68] font-bold px-6 py-2 rounded-xl shadow hover:bg-[#006b68] hover:text-white transition"
           >
             + Thêm tin tức
           </button>
@@ -169,7 +169,7 @@ export default function AdminNews() {
       <div className="bg-white rounded-2xl shadow p-6 overflow-x-auto">
         <table className="min-w-full text-left">
           <thead>
-            <tr className="text-[#b8001c] text-lg">
+            <tr className="text-[#006b68] text-lg">
               <th className="py-2 px-3">Tiêu đề</th>
               <th className="py-2 px-3">Ngày đăng</th>
               <th className="py-2 px-3">Mô tả</th>
@@ -185,13 +185,13 @@ export default function AdminNews() {
                 <td className="py-2 px-3 flex gap-2">
                   <button
                     onClick={() => handleEdit(n)}
-                    className="px-3 py-1 rounded bg-[#b8001c] text-white font-bold hover:bg-black transition"
+                    className="px-3 py-1 rounded bg-[#006b68] text-white font-bold hover:bg-black transition"
                   >
                     Sửa
                   </button>
                   <button
                     onClick={() => handleDelete(n.id)}
-                    className="px-3 py-1 rounded bg-gray-200 text-[#b8001c] font-bold hover:bg-red-100 transition"
+                    className="px-3 py-1 rounded bg-gray-200 text-[#006b68] font-bold hover:bg-gray-300 transition"
                   >
                     Xoá
                   </button>
@@ -208,7 +208,7 @@ export default function AdminNews() {
             disabled={page === 1}
             onClick={() => setPage(page - 1)}
             className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+              ${page === 1 ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#006b68] text-[#006b68] hover:bg-[#006b68] hover:text-white'}`}
           >
             &#8592;
           </button>
@@ -217,7 +217,7 @@ export default function AdminNews() {
               key={i + 1}
               onClick={() => setPage(i + 1)}
               className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-                ${page === i + 1 ? 'bg-[#03bb65] border-[#03bb65] text-white' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+                ${page === i + 1 ? 'bg-[#006b68] border-[#006b68] text-white' : 'bg-white border-[#006b68] text-[#006b68] hover:bg-[#006b68] hover:text-white'}`}
             >
               {i + 1}
             </button>
@@ -226,7 +226,7 @@ export default function AdminNews() {
             disabled={page === totalPages}
             onClick={() => setPage(page + 1)}
             className={`w-9 h-9 flex items-center justify-center rounded-full border-2 font-bold shadow transition-colors duration-200
-              ${page === totalPages ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#03bb65] text-[#03bb65] hover:bg-[#03bb65] hover:text-white'}`}
+              ${page === totalPages ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white border-[#006b68] text-[#006b68] hover:bg-[#006b68] hover:text-white'}`}
           >
             &#8594;
           </button>
@@ -336,7 +336,7 @@ function NewsForm({ news, onClose, onSubmit }: { news: NewsItem | null, onClose:
         >
           ×
         </button>
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[#b8001c] pr-8">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-[#006b68] pr-8">
           {news ? "Sửa tin tức" : "Thêm tin tức"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -398,7 +398,7 @@ function NewsForm({ news, onClose, onSubmit }: { news: NewsItem | null, onClose:
                     setForm({ ...form, thumbnail: '' });
                     setThumbnailFile(null);
                   }}
-                  className="text-red-500 text-xs mt-1 block"
+                  className="text-[#006b68] text-xs mt-1 block"
                 >
                   Xóa ảnh
                 </button>

@@ -45,7 +45,7 @@ export default function AboutCTA() {
 			<div className="relative max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 px-4">
 				{/* Left */}
 				<div className="flex-1 text-left mb-8 md:mb-0">
-					<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-[#03bb65]">
+					<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-[#006b68]">
 						Tại sao chọn{" "}
 						<span className="text-[#1d1d1f]">
 							<span className="text-[#1d1d1f]">NIAD</span>?
@@ -53,7 +53,7 @@ export default function AboutCTA() {
 					</h2>
 					<div className="text-lg sm:text-xl md:text-2xl font-semibold mb-2 text-[#1d1d1f]">
 						ĐỐI TÁC UY TÍN{" "}
-						<span className="text-[#03bb65]">DỊCH VỤ NGÂN HÀNG</span>
+						<span className="text-[#006b68]">DỊCH VỤ NGÂN HÀNG</span>
 					</div>
 					<div className="italic text-[#6e6e73] mb-6 text-base sm:text-lg">
 						“Chúng tôi cung cấp dịch vụ dựa trên kinh nghiệm thực tế và năng
@@ -61,7 +61,7 @@ export default function AboutCTA() {
 					</div>
 					<a
 						href="/about"
-						className="inline-block px-6 py-2 bg-[#03bb65] text-white rounded-lg font-semibold shadow hover:bg-[#029e54] transition mb-4"
+						className="inline-block px-6 py-2 bg-[#006b68] text-white rounded-lg font-semibold shadow hover:bg-[#006b68] transition mb-4"
 					>
 						Xem thêm
 					</a>
@@ -73,11 +73,11 @@ export default function AboutCTA() {
 							key={idx}
 							className="flex items-center bg-white rounded-2xl shadow p-6 group transition-transform duration-300 ease-in-out hover:translate-x-4"
 						>
-							<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-[#03bb65]/20 mr-6 text-3xl text-[#bfa15a]">
+							<div className="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-[#006b68]/20 mr-6 text-3xl text-[#bfa15a]">
 								{stat.icon}
 							</div>
 							<div>
-								<span className="font-bold text-[#03bb65] text-xl mr-2">
+								<span className="font-bold text-[#006b68] text-xl mr-2">
 									{stat.highlight}
 								</span>
 								<span className="font-semibold text-[#1d1d1f] text-lg">

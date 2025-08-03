@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:9999';
 
-export async function GET(req: NextRequest, context: { params: any }) {
-  const { id } = context.params;
+export async function GET(
+  req: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = (await params);
   const apiUrl = `${BASE_URL}/api/news/get/${id}`;
   try {
     const res = await fetch(apiUrl, {
@@ -22,8 +25,11 @@ export async function GET(req: NextRequest, context: { params: any }) {
   }
 }
 
-export async function PUT(req: NextRequest, context: { params: any }) {
-  const { id } = context.params;
+export async function PUT(
+  req: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = (await params);
   
   // Kiểm tra và làm sạch ID
   if (!id || typeof id !== 'string') {

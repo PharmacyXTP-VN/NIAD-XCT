@@ -69,159 +69,170 @@ export default function ProductSection() {
       });
   }, [activeCategory, activeBrand, initialized]);
 
-  // Khi fill UI, lấy đúng data theo model
-  const product = products.find((p: any) => p.model === activeCategory);
+  // Thêm state để theo dõi index hiện tại
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!initialized || brands.length === 0) {
     return <LoadingBanner />;
   }
 
+  const filtered = products.filter((p: any) => p.model === activeCategory);
+  const total = filtered.length;
+  const currentProduct = total > 0 ? filtered[currentIndex] : null;
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % total);
+  };
+
   return (
-    <section className="w-full bg-[#f0f2f5] px-0 py-3 pb-8 pt-15">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Filter hãng xe */}
-        <div className="flex flex-col items-center justify-center mb-8 mt-8">
-          <div className="bg-gradient-to-r from-[#e6f9f0] via-white to-[#e6f9f0] shadow-xl rounded-full px-4 py-4 border-2 border-[#03bb65] flex flex-wrap gap-4 justify-center items-center min-h-[64px]">
-            {brands.map((brand) => (
-              <button
-                key={brand}
-                onClick={() => setActiveBrand(brand)}
-                className={`px-8 py-3 rounded-full font-bold text-lg transition-all border-2 shadow-md duration-200 focus:outline-none focus:ring-2 focus:ring-[#03bb65] focus:ring-offset-2 ${
-                  activeBrand === brand
-                    ? "text-white bg-[#03bb65] border-[#03bb65] scale-105 drop-shadow-lg"
-                    : "text-[#03bb65] bg-white border-[#03bb65] hover:bg-[#e6f9f0] hover:scale-105"
-                }`}
-                style={{ minWidth: 120 }}
-              >
-                {brand}
-              </button>
-            ))}
-          </div>
-        </div>
-        {/* Filter loại xe */}
-        <div className="flex justify-center mb-8">
-          <div className="w-full">
-            <div className="flex md:hidden overflow-x-auto no-scrollbar gap-2 pb-1">
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
-                      isActive
-                        ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
-                        : "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="hidden md:flex bg-white/80 shadow rounded-full px-2 py-2 gap-2 border border-[#03bb65]">
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 ${
-                      isActive
-                        ? "text-[#03bb65] border-[#03bb65] bg-[#e6f9f0]"
-                        : "text-gray-700 border-transparent hover:text-[#03bb65] hover:bg-[#e6f9f0]"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-        {/* Hiển thị sản phẩm */}
-        <div className="bg-white/90 rounded-3xl shadow-2xl p-8 md:p-12 relative overflow-hidden">
-          {product ? (
-            <div className="w-full grid md:grid-cols-2 gap-10 items-center flex-1">
-              {/* Left Info */}
-              <div className="w-auto space-y-4 px-6">
-                <h2 className="text-4xl font-bold uppercase text-[#03bb65] drop-shadow mb-2">{product.name}</h2>
-                <div className="flex flex-wrap gap-4 mb-2">
-                  <span className="inline-flex items-center gap-1 text-base text-gray-700"><b>Số lượng:</b> {product.count}</span>
-                  {/* Hiển thị highlights nếu có */}
-                  {Array.isArray(product.highlights) && product.highlights.length > 0 && product.highlights.map((h: any, idx: number) => (
-                    <span key={idx} className="inline-flex items-center gap-1 text-base text-gray-700"><b>{h.name}:</b> {h.value}</span>
-                  ))}
-                  {/* Hiển thị specifications nếu có */}
-                  {Array.isArray(product.specifications) && product.specifications.length > 0 && product.specifications.map((s: any, idx: number) => (
-                    <span key={idx} className="inline-flex items-center gap-1 text-base text-gray-700"><b>{s.name}:</b> {s.value}</span>
-                  ))}
-                </div>
-                <p className="text-gray-700 text-base mb-2">{product.description}</p>
-                <p className="text-2xl font-bold text-[#006c67] mb-4">{product.price?.toLocaleString()}₫</p>
-                <button className="mt-4 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
-                  onClick={() => {
-                    const id = product._id || product.id;
-                    if (id) window.location.href = `/product-detail/${id}`;
-                    else alert('Không tìm thấy id sản phẩm!');
-                  }}
-                >
-                  Chi tiết sản phẩm
-                </button>
-              </div>
-              {/* Right - Image + Info */}
-              <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 bg-[#e6f9f0] z-0 rounded-2xl border-2 border-[#03bb65]" />
-                {/* ChevronLeft button bên trái khung ảnh */}
-                <button
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition z-20"
-                  style={{ transform: 'translateY(-50%)' }}
-                >
-                  <ChevronLeft size={28} />
-                </button>
-                <Image
-                  src={product.images?.main || product.image || '/images/news/test2.png'}
-                  alt={product.name}
-                  className="relative z-10 w-full h-auto object-contain max-h-[340px] drop-shadow-xl cursor-pointer hover:scale-105 transition-transform duration-200"
-                  width={600}
-                  height={400}
-                  priority
-                  onClick={() => (window.location.href = `/product-detail/${product._id || product.id}`)}
-                />
-                {/* ChevronRight button bên phải khung ảnh */}
-                <button
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white border border-[#03bb65] text-[#03bb65] rounded-full p-2 shadow hover:bg-[#e6f9f0] transition z-20"
-                  style={{ transform: 'translateY(-50%)' }}
-                >
-                  <ChevronRight size={28} />
-                </button>
-              </div>
-              <div className="absolute top-6 right-6 z-20 text-[#03bb65] space-y-4 bg-white/80 rounded-xl px-4 py-2 shadow">
-                  <div className="flex items-center gap-2">
-                    <Fuel size={16} />
-                    <span className="text-sm font-semibold">{product.fuelType}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Settings2 size={16} />
-                    <span className="text-sm font-semibold">
-                      {product.transmission}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users size={16} />
-                    <span className="text-sm font-semibold">
-                      {product.seats}
-                    </span>
-                  </div>
-                </div>
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 text-lg">
-              Không có sản phẩm nào trong danh mục này.
-            </p>
-          )}
+    <section className="w-full relative bg-white overflow-hidden flex flex-col justify-center md:px-16 py-16">
+      {/* Tabs thương hiệu */}
+      <div className="flex flex-col items-center justify-center mb-8 mt-8">
+        <div className="bg-white rounded-full border border-[#006b68] flex flex-wrap md:inline-flex gap-0">
+          {brands.map((brand) => (
+            <button
+              key={brand}
+              onClick={() => setActiveBrand(brand)}
+              className={`px-8 py-3 rounded-full font-bold text-lg transition-all ${
+                activeBrand === brand
+                  ? "text-white bg-[#006b68] shadow-md"
+                  : "text-[#006b68] bg-white hover:bg-gray-50"
+              }`}
+              style={{ minWidth: 120 }}
+            >
+              {brand}
+            </button>
+          ))}
         </div>
       </div>
+      
+      {/* Filter loại xe */}
+      <div className="flex justify-center mb-8">
+        <div className="w-full">
+          <div className="flex md:hidden overflow-x-auto no-scrollbar gap-2 pb-1">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setActiveCategory(cat);
+                    setCurrentIndex(0);
+                  }}
+                  className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold text-sm transition-all border-b-2 whitespace-nowrap ${
+                    isActive
+                      ? "text-[#006b68] border-[#006b68] bg-[#e6f9f0]"
+                      : "text-gray-700 border-transparent hover:text-[#006b68] hover:bg-[#e6f9f0]"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+          <div className="hidden md:flex bg-white rounded-full border border-[#006b68] p-1 gap-0">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setActiveCategory(cat);
+                    setCurrentIndex(0);
+                  }}
+                  className={`flex-shrink-0 px-6 py-2 rounded-full font-semibold text-sm transition-all whitespace-nowrap ${
+                    isActive
+                      ? "text-white bg-[#006b68] shadow-md"
+                      : "text-[#006b68] bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Product hiển thị nếu có */}
+      {currentProduct ? (
+        <div className="w-full grid md:grid-cols-2 gap-6 items-center flex-1">
+          {/* Left Info */}
+          <div className="w-auto space-y-4 px-6">
+            <h2 className="text-4xl font-bold uppercase">{currentProduct.name}</h2>
+            <p className="text-gray-400 text-base">{currentProduct.description || 'Chưa có mô tả'}</p>
+            <p className="text-2xl font-bold">{currentProduct.price?.toLocaleString()}₫</p>
+            <button 
+              className="mt-4 px-6 py-2 bg-[#006c67] text-white rounded-md hover:bg-gray-800"
+              onClick={() => {
+                const id = currentProduct._id || currentProduct.id;
+                if (id) window.location.href = `/product-detail/${id}`;
+                else alert('Không tìm thấy id sản phẩm!');
+              }}
+            >
+              Xem tất cả
+            </button>
+          </div>
+
+          {/* Right - Image + Info */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-[#006c67] skew-x-[-12deg] origin-left z-0 rounded-md"></div>
+
+            {currentProduct.images?.main ? (
+              <Image
+                src={currentProduct.images.main}
+                alt={currentProduct.name}
+                className="relative z-10 w-full h-auto object-contain"
+                width={700} 
+                height={500}
+                priority
+              />
+            ) : (
+              <div className="relative z-10 w-full h-[400px] flex items-center justify-center text-white">
+                <span>Chưa có hình ảnh</span>
+              </div>
+            )}
+
+            <div className="absolute top-6 right-6 z-20 text-white space-y-4">
+              <div className="flex items-center gap-2">
+                <Fuel size={16} />
+                <span className="text-sm">{currentProduct.fuelType || 'N/A'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Settings2 size={16} />
+                <span className="text-sm">{currentProduct.transmission || 'N/A'}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users size={16} />
+                <span className="text-sm">{currentProduct.seats || 'N/A'}</span>
+              </div>
+            </div>
+
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-4">
+              <button
+                onClick={handlePrev}
+                className="bg-white rounded-full p-2 shadow hover:bg-gray-100"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={handleNext}
+                className="bg-white rounded-full p-2 shadow hover:bg-gray-100"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="text-center text-gray-500 text-lg">
+          Không có sản phẩm nào trong danh mục này.
+        </p>
+      )}
     </section>
   );
 }

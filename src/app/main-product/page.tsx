@@ -83,7 +83,7 @@ export default function MainProductsPage() {
 	return (
 		<DefaultLayout>
 			<div className="min-h-screen bg-[#f0f2f5] pb-12">
-				<section className="relative bg-gradient-to-r from-[#17877b] to-[#7ee8c7] text-white py-20 overflow-hidden mb-0" style={{ borderBottom: 'none' }}>
+				<section className="relative bg-gradient-to-r from-[#006b68] to-[#e6f9f0] text-white py-20 overflow-hidden mb-0" style={{ borderBottom: 'none' }}>
 					<div className="absolute inset-0 opacity-20 bg-[url('/images/cars/test2-removebg-preview.png')] bg-no-repeat bg-right bg-contain pointer-events-none" />
 					<div className="relative z-10 max-w-4xl mx-auto px-4 text-center flex flex-col items-center">
 						<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-lg uppercase">
@@ -98,7 +98,7 @@ export default function MainProductsPage() {
 							{brands.map((brand) => (
 								<button
 									key={brand}
-									className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#03bb65] text-white border-[#03bb65]" : "bg-white text-[#03bb65] border-[#03bb65]"}`}
+									className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeBrand === brand ? "bg-[#006b68] text-white border-[#006b68]" : "bg-white text-[#006b68] border-[#006b68]"}`}
 									onClick={() => {
 										setActiveBrand(brand);
 										// Lấy model đầu tiên của brand này và set luôn
@@ -116,7 +116,7 @@ export default function MainProductsPage() {
 							{categories.map((cat) => (
 								<button
 									key={cat}
-									className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#17877b] text-white border-[#17877b]" : "bg-white text-[#17877b] border-[#17877b]"}`}
+									className={`px-5 py-2 rounded-full font-semibold border-2 transition ${activeCategory === cat ? "bg-[#006b68] text-white border-[#006b68]" : "bg-white text-[#006b68] border-[#006b68]"}`}
 									onClick={() => setActiveCategory(cat)}
 								>
 									{cat}
@@ -150,20 +150,20 @@ export default function MainProductsPage() {
 										/>
 									</div>
 									<div className="w-full md:w-3/5 flex flex-col justify-center h-full">
-										<h2 className="text-2xl font-bold text-[#03bb65] mb-3 text-left uppercase tracking-tight">
+										<h2 className="text-2xl font-bold text-[#006b68] mb-3 text-left uppercase tracking-tight">
 											{product.name}
 										</h2>
 										<ul className="mb-4 space-y-2">
 											<li className="flex items-center gap-2 text-[#1d1d1f] text-base">
-												<Cog6ToothIcon className="w-5 h-5 text-[#b8001c] inline" />
+												<Cog6ToothIcon className="w-5 h-5 text-[#006b68] inline" />
 												<span>Hộp số: {product.transmission}</span>
 											</li>
 											<li className="flex items-center gap-2 text-[#1d1d1f] text-base">
-												<BoltIcon className="w-5 h-5 text-[#b8001c] inline" />
+												<BoltIcon className="w-5 h-5 text-[#006b68] inline" />
 												<span>Nhiên liệu: {product.fuelType}</span>
 											</li>
 											<li className="flex items-center gap-2 text-[#1d1d1f] text-base">
-												<MapPinIcon className="w-5 h-5 text-[#b8001c] inline" />
+												<MapPinIcon className="w-5 h-5 text-[#006b68] inline" />
 												<span>Số chỗ: {product.seats}</span>
 											</li>
 											{/* Hiển thị highlights nếu có */}
@@ -183,7 +183,7 @@ export default function MainProductsPage() {
 											<div className="text-xs text-red-600 font-semibold">Giá bán: {product.price?.toLocaleString()}₫</div>
 											<div className="text-xs text-gray-600 font-medium">{product.description}</div>
 											<button
-												className="mt-3 px-6 py-2 bg-[#03bb65] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
+												className="mt-3 px-6 py-2 bg-[#006b68] text-white rounded-md hover:bg-[#006c67] transition font-semibold shadow"
 												onClick={() => window.location.href = `/product-detail/${product._id || product.id}`}
 											>
 												Chi tiết sản phẩm
