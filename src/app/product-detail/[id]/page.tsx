@@ -15,6 +15,8 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState(tabList[0]);
   const [product, setProduct] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [allImages, setAllImages] = useState<string[]>([]);
   const params = useParams();
   const id = params?.id;
 
@@ -24,6 +26,74 @@ export default function ProductDetailPage() {
       .then((res) => res.json())
       .then((data) => setProduct(data.data || null));
   }, [id]);
+
+  // Tạo danh sách tất cả ảnh khi product thay đổi
+  useEffect(() => {
+    if (!product) return;
+    
+    const images: string[] = [];
+    
+    // Thêm ảnh chính
+    if (product.images?.main) {
+      images.push(product.images.main);
+    }
+    
+    // Thêm ảnh gallery
+    if (product.images?.gallery && product.images.gallery.length > 0) {
+      images.push(...product.images.gallery);
+    } else {
+      // Hỗ trợ mô hình cũ
+      ['front', 'back', 'left', 'right'].forEach(key => {
+        if (product.images?.[key]) {
+          images.push(product.images[key]);
+        }
+      });
+    }
+    
+    setAllImages(images);
+  }, [product]);
+
+  // Hàm mở ảnh với index
+  const openImage = (imageUrl: string) => {
+    const index = allImages.findIndex(img => img === imageUrl);
+    setSelectedImageIndex(index >= 0 ? index : 0);
+    setSelectedImage(imageUrl);
+  };
+
+  // Điều hướng ảnh
+  const goToPrevImage = () => {
+    const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : allImages.length - 1;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(allImages[newIndex]);
+  };
+
+  const goToNextImage = () => {
+    const newIndex = selectedImageIndex < allImages.length - 1 ? selectedImageIndex + 1 : 0;
+    setSelectedImageIndex(newIndex);
+    setSelectedImage(allImages[newIndex]);
+  };
+
+  // Xử lý phím tắt
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (!selectedImage) return;
+      
+      if (e.key === 'ArrowLeft') {
+        const newIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : allImages.length - 1;
+        setSelectedImageIndex(newIndex);
+        setSelectedImage(allImages[newIndex]);
+      } else if (e.key === 'ArrowRight') {
+        const newIndex = selectedImageIndex < allImages.length - 1 ? selectedImageIndex + 1 : 0;
+        setSelectedImageIndex(newIndex);
+        setSelectedImage(allImages[newIndex]);
+      } else if (e.key === 'Escape') {
+        setSelectedImage(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [selectedImage, selectedImageIndex, allImages]);
 
   if (!product) {
     return (
@@ -136,7 +206,7 @@ export default function ProductDetailPage() {
                     <div className="md:col-span-2 lg:col-span-3">
                       <div 
                         className="bg-[#f8fcfb] p-3 rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-shadow"
-                        onClick={() => setSelectedImage(product.images.main)}
+                        onClick={() => openImage(product.images.main)}
                       >
                         <Image 
                           src={product.images.main} 
@@ -157,7 +227,7 @@ export default function ProductDetailPage() {
                       <div 
                         key={idx} 
                         className="bg-[#f8fcfb] p-3 rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-shadow"
-                        onClick={() => setSelectedImage(imgUrl)}
+                        onClick={() => openImage(imgUrl)}
                       >
                         <Image 
                           src={imgUrl} 
@@ -177,7 +247,7 @@ export default function ProductDetailPage() {
                           <div 
                             key={key}
                             className="bg-[#f8fcfb] p-3 rounded-xl shadow-md cursor-pointer hover:shadow-xl transition-shadow"
-                            onClick={() => setSelectedImage(product.images[key])}
+                            onClick={() => openImage(product.images[key])}
                           >
                             <Image 
                               src={product.images[key]} 
@@ -204,25 +274,58 @@ export default function ProductDetailPage() {
       {/* Modal hiển thị ảnh phóng to */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-7xl max-h-screen flex items-center justify-center">
+          <div className="relative w-full h-full p-2">
+            {/* Nút đóng */}
             <button 
-              className="absolute top-4 right-4 text-white bg-black/50 w-10 h-10 rounded-full flex items-center justify-center hover:bg-black"
-              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 text-white bg-black/70 w-12 h-12 rounded-full flex items-center justify-center hover:bg-black z-10"
+              onClick={e => { e.stopPropagation(); setSelectedImage(null); }}
             >
-              <span className="text-xl font-bold">×</span>
+              <span className="text-2xl font-bold">×</span>
             </button>
             
-            <div className="overflow-hidden max-h-[90vh] max-w-[90vw]">
+            {/* Nút điều hướng trái */}
+            {allImages.length > 1 && (
+              <button 
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/70 w-12 h-12 rounded-full flex items-center justify-center hover:bg-black z-10"
+                onClick={e => { e.stopPropagation(); goToPrevImage(); }}
+              >
+                <span className="text-2xl font-bold">‹</span>
+              </button>
+            )}
+            
+            {/* Nút điều hướng phải */}
+            {allImages.length > 1 && (
+              <button 
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/70 w-12 h-12 rounded-full flex items-center justify-center hover:bg-black z-10"
+                onClick={e => { e.stopPropagation(); goToNextImage(); }}
+              >
+                <span className="text-2xl font-bold">›</span>
+              </button>
+            )}
+            
+            {/* Chỉ số ảnh */}
+            {allImages.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white bg-black/70 px-4 py-2 rounded-full z-10">
+                <span className="text-sm font-medium">
+                  {selectedImageIndex + 1} / {allImages.length}
+                </span>
+              </div>
+            )}
+            
+            <div className="w-full h-full flex items-center justify-center">
               <Image
                 src={selectedImage}
                 alt="Phóng to"
-                width={1600}
-                height={1200}
-                className="max-h-[90vh] w-auto object-contain"
-                style={{ maxWidth: '90vw' }}
+                width={2400}
+                height={1800}
+                className="max-w-full max-h-full w-auto h-auto object-contain"
+                style={{ 
+                  minWidth: '80vw',
+                  minHeight: '80vh'
+                }}
               />
             </div>
           </div>
