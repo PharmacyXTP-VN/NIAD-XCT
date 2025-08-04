@@ -12,9 +12,9 @@ import { useRef, useState, useEffect } from "react";
 
 // Fallback banner images if API fails
 const fallbackBannerImages = [
-  "/images/banners/xepajero1.png",
-  "/images/banners/isuzu.png",
-  "/images/banners/isuzu2.png",
+  "/images/banners/4324cbee-9e95-4436-b19b-efa823de9278.png",
+  "/images/banners/67f3c6c1-fc32-4e1d-9771-59dd377777a4.png",
+  "/images/banners/83da159c-7624-4915-84d2-3c30f9afbc89.png",
 ];
 
 interface BannerImage {
@@ -122,7 +122,10 @@ export default function Banner() {
               onError={(e) => {
                 console.error(`Error loading image: ${image.url}`);
                 // Hiển thị ảnh dự phòng khi ảnh chính không tải được
-                e.currentTarget.src = fallbackBannerImages[0];
+                const target = e.currentTarget;
+                if (target.src !== fallbackBannerImages[0]) {
+                  target.src = fallbackBannerImages[0];
+                }
               }}
             />
           </div>
