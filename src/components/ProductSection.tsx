@@ -9,6 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import LoadingBanner from "@/components/LoadingBanner";
 
 export default function ProductSection() {
@@ -18,6 +19,12 @@ export default function ProductSection() {
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [products, setProducts] = useState<any[]>([]);
   const [initialized, setInitialized] = useState(false);
+
+  // Helper function để lấy ID sản phẩm
+  const getProductId = (product: any) => {
+    console.log('Current product:', product); // Debug log
+    return product._id || product.id;
+  };
 
   // Lấy danh sách hãng xe khi mount
   useEffect(() => {
@@ -183,18 +190,39 @@ export default function ProductSection() {
             <div className="absolute inset-0 bg-[#006c67] skew-x-[-12deg] origin-left z-0 rounded-md"></div>
 
             {currentProduct.images?.main ? (
-              <Image
-                src={currentProduct.images.main}
-                alt={currentProduct.name}
-                className="relative z-10 w-full h-auto object-contain"
-                width={700} 
-                height={500}
-                priority
-              />
+              getProductId(currentProduct) ? (
+                <Link href={`/product-detail/${getProductId(currentProduct)}`} className="block">
+                  <Image
+                    src={currentProduct.images.main}
+                    alt={currentProduct.name}
+                    className="relative z-10 w-full h-auto object-contain cursor-pointer hover:scale-105 transition-transform duration-300"
+                    width={700} 
+                    height={500}
+                    priority
+                  />
+                </Link>
+              ) : (
+                <Image
+                  src={currentProduct.images.main}
+                  alt={currentProduct.name}
+                  className="relative z-10 w-full h-auto object-contain"
+                  width={700} 
+                  height={500}
+                  priority
+                />
+              )
             ) : (
-              <div className="relative z-10 w-full h-[400px] flex items-center justify-center text-white">
-                <span>Chưa có hình ảnh</span>
-              </div>
+              getProductId(currentProduct) ? (
+                <Link href={`/product-detail/${getProductId(currentProduct)}`} className="block">
+                  <div className="relative z-10 w-full h-[400px] flex items-center justify-center text-white cursor-pointer hover:bg-[#005550] transition-colors duration-300">
+                    <span>Chưa có hình ảnh - Click để xem chi tiết</span>
+                  </div>
+                </Link>
+              ) : (
+                <div className="relative z-10 w-full h-[400px] flex items-center justify-center text-white">
+                  <span>Chưa có hình ảnh</span>
+                </div>
+              )
             )}
 
             <div className="absolute top-6 right-6 z-20 text-white space-y-4">
