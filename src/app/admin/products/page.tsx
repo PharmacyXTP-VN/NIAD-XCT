@@ -163,7 +163,7 @@ export default function AdminProducts() {
 
   const handleEdit = async (product: Product) => {
     setFormLoading(true);
-    setShowForm(true);
+    // Không mở form ngay, đợi load xong data
     try {
       const res = await fetch(`/api/car/${product._id}`);
       const data = await res.json();
@@ -210,9 +210,13 @@ export default function AdminProducts() {
           highlightFeatures: data.data.highlightFeatures || '',
           specifications: data.data.specifications || '',
         });
+        
+        // Chỉ mở form sau khi load xong data
+        setShowForm(true);
       }
     } catch {
       setEditProduct(product);
+      setShowForm(true);
     } finally {
       setFormLoading(false);
     }
@@ -310,13 +314,15 @@ export default function AdminProducts() {
                 <td className="py-2 px-3 flex gap-2">
                   <button
                     onClick={() => handleEdit(p)}
-                    className="px-3 py-1 rounded bg-[#006b68] text-white font-bold hover:bg-black transition"
+                    disabled={formLoading}
+                    className="px-3 py-1 rounded bg-[#006b68] text-white font-bold hover:bg-black transition disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    Sửa
+                    {formLoading ? 'Đang tải...' : 'Sửa'}
                   </button>
                   <button
                     onClick={() => handleDelete(p._id)}
-                    className="px-3 py-1 rounded bg-gray-200 text-[#006b68] font-bold hover:bg-gray-300 transition"
+                    disabled={formLoading}
+                    className="px-3 py-1 rounded bg-gray-200 text-[#006b68] font-bold hover:bg-gray-300 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
                     Xoá
                   </button>
