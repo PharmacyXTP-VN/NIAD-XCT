@@ -454,8 +454,20 @@ function ProductForm({
       });
       
       setForm({
-        ...form,
-        ...product,
+        _id: product._id,
+        name: product.name || '',
+        manufacturer: product.manufacturer || '',
+        model: product.model || '',
+        price: product.price || 0,
+        color: product.color || '',
+        seats: product.seats || 2,
+        fuelType: product.fuelType || '',
+        transmission: product.transmission || '',
+        licensePlate: product.licensePlate || '',
+        status: product.status || 'active',
+        year: product.year || new Date().getFullYear(),
+        description: product.description || '',
+        image: product.image || '',
         images: images,
         highlightFeatures: product.highlightFeatures || '',
         specifications: specValue,
@@ -463,8 +475,7 @@ function ProductForm({
       // Reset imageFiles khi chuyển sang product khác
       setImageFiles({});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [product]); // Chỉ phụ thuộc vào product, không phụ thuộc form
 
   // Responsive popup
   return (
@@ -517,6 +528,11 @@ function ProductForm({
               // Thêm ảnh main
               if (imageFiles.main) {
                 formData.append('main', imageFiles.main);
+              }
+              
+              // Thêm ảnh specifications
+              if (imageFiles.specifications) {
+                formData.append('specifications', imageFiles.specifications);
               }
               
               // Thêm ảnh gallery
@@ -579,6 +595,11 @@ function ProductForm({
               // Thêm ảnh main
               if (imageFiles.main) {
                 formData.append('main', imageFiles.main);
+              }
+              
+              // Thêm ảnh specifications
+              if (imageFiles.specifications) {
+                formData.append('specifications', imageFiles.specifications);
               }
               
               // Thêm ảnh gallery

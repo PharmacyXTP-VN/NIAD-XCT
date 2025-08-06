@@ -180,7 +180,7 @@ export default function ProductDetailPage() {
           {activeTab === "Thông số kỹ thuật" && (
             <section className="bg-white rounded-xl p-6 shadow-lg">
               <h3 className="text-2xl font-bold text-[#03bb65] mb-6">Thông số kỹ thuật</h3>
-              {product.specifications && typeof product.specifications === 'string' && product.specifications.startsWith('http') ? (
+              {product.specifications && product.specifications.trim() !== '' ? (
                 <div className="flex justify-center bg-[#f8fcfb] p-2 sm:p-4 rounded-xl shadow-md overflow-hidden">
                   <Image 
                     src={product.specifications} 
@@ -189,10 +189,22 @@ export default function ProductDetailPage() {
                     height={1600}
                     className="rounded-lg w-full object-contain max-h-[800px]" 
                     style={{ maxWidth: '100%' }}
+                    onError={(e) => {
+                      console.error('Lỗi load ảnh specifications:', product.specifications);
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                    }}
                   />
+                  <div className="hidden text-center p-8">
+                    <p className="text-red-600 mb-2">❌ Không thể tải ảnh thông số kỹ thuật</p>
+                    <p className="text-gray-600 text-sm">URL: {product.specifications}</p>
+                  </div>
                 </div>
               ) : (
-                <p className="text-black p-4 bg-gray-50 rounded-lg text-center">Không có thông tin thông số kỹ thuật.</p>
+                <div className="text-center p-8 bg-gray-50 rounded-lg">
+                  <p className="text-gray-600 mb-4">Không có thông tin thông số kỹ thuật.</p>
+                  <p className="text-xs text-gray-400">Debug info: specifications = &quot;{product.specifications}&quot;</p>
+                </div>
               )}
             </section>
           )}
