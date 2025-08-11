@@ -12,8 +12,8 @@ export async function GET(
   }
 
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:9999";
-    const response = await fetch(`${backendUrl}/api/images/${type}`, {
+  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9999";
+  const response = await fetch(`${backendUrl}/api/images/${type}`, {
       headers: {
         "Content-Type": "application/json",
       },
