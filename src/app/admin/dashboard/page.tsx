@@ -18,6 +18,14 @@ export default function AdminDashboard() {
           <div className="text-lg font-semibold mb-1 text-black">Quản lý tin tức</div>
           <a href="/admin/news" className="text-[#006b68] font-bold hover:underline">Xem chi tiết</a>
         </div>
+        <div className="bg-white rounded-2xl shadow p-8 flex flex-col items-center group hover:shadow-xl transition">
+          <div className="text-lg font-semibold mb-1 text-black">Quản lý hình ảnh</div>
+          <a href="/admin/images" className="text-[#006b68] font-bold hover:underline">Xem chi tiết</a>
+        </div>
+        <div className="bg-white rounded-2xl shadow p-8 flex flex-col items-center group hover:shadow-xl transition">
+          <div className="text-lg font-semibold mb-1 text-black">Quản lý nội dung footer</div>
+          <a href="/admin/footer" className="text-[#006b68] font-bold hover:underline">Xem chi tiết</a>
+        </div>
       </div>
     </>
   );

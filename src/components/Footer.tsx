@@ -2,10 +2,42 @@
 // File: src/components/Footer.tsx
 "use client";
 
+
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface FooterContent {
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  embedMap: string;
+}
 
 export default function Footer() {
+  const [content, setContent] = useState<FooterContent | null>(null);
+
+  useEffect(() => {
+    fetch("/api/footer-content")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.data) {
+          setContent(data.data);
+          console.log("[Footer] content from API:", data.data);
+        } else {
+          console.log("[Footer] No data from API", data);
+        }
+      })
+      .catch((err) => {
+        console.error("[Footer] Fetch error:", err);
+      });
+  }, []);
+
+
+  // Helper: kiểm tra email
+
+
   return (
     <footer className="bg-[#006b68] text-white pt-8 pb-4">
       <div className="max-w-7xl mx-auto px-4">
@@ -52,8 +84,7 @@ export default function Footer() {
                 </svg>
                 <div>
                   <p className="text-white/90">
-                    ĐC: Tầng 6 số 263 đường Cầu Giấy, phường <br/> Dịch Vọng, quận Cầu Giấy,
-                    Hà Nội
+                    ĐC: {content?.address || "Tầng 6 số 263 đường Cầu Giấy, phường Dịch Vọng, quận Cầu Giấy, Hà Nội"}
                   </p>
                 </div>
               </div>
@@ -74,12 +105,16 @@ export default function Footer() {
                 </svg>
                 <span className="text-white/90">
                   ĐT:{" "}
-                  <a
-                    href="tel:02473044688"
-                    className="text-white hover:underline font-semibold"
-                  >
-                    024 730 44 688
-                  </a>
+                  {content?.phone?.trim() ? (
+                    <a
+                      href={`tel:${content.phone.trim()}`}
+                      className="text-white hover:underline font-semibold"
+                    >
+                      {content.phone.trim()}
+                    </a>
+                  ) : (
+                    "024 730 44 688"
+                  )}
                 </span>
               </div>
 
@@ -99,12 +134,16 @@ export default function Footer() {
                 </svg>
                 <span className="text-white/90">
                   Email:{" "}
-                  <a
-                    href="mailto:taisan@nganluc.vn"
-                    className="text-white hover:underline font-semibold"
-                  >
-                    taisan@nganluc.vn
-                  </a>
+                  {content?.email?.trim() ? (
+                    <a
+                      href={`mailto:${content.email.trim()}`}
+                      className="text-white hover:underline font-semibold"
+                    >
+                      {content.email.trim()}
+                    </a>
+                  ) : (
+                    "taisan@nganluc.vn"
+                  )}
                 </span>
               </div>
 
@@ -123,15 +162,25 @@ export default function Footer() {
                   />
                 </svg>
                 <span className="text-white/90">
-                  Website:{" "}
-                  <a
-                    href="https://nganluc.vn"
-                    className="text-white hover:underline font-semibold"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    nganluc.vn
-                  </a>
+                  Website: {" "}
+                  {content?.website?.trim() ? (
+                    <a
+                      href={
+                        /^https?:\/\//.test(content.website.trim())
+                          ? content.website.trim()
+                          : `https://${content.website.trim()}`
+                      }
+                      className="text-white hover:underline font-semibold"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {content.website.trim()
+                        .replace(/^https?:\/\//, "")
+                        .replace(/^www\./, "")}
+                    </a>
+                  ) : (
+                    "nganluc.vn"
+                  )}
                 </span>
               </div>
             </div>
@@ -175,13 +224,13 @@ export default function Footer() {
           {/* Bản đồ - Right Column */}
           <div>
             <div className="w-full h-[300px] rounded-lg overflow-hidden shadow-lg">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.8683553050463!2d105.79569839999999!3d21.034306099999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab47962a0e01%3A0xd6142d8ad01b6d8f!2zQ8O0bmcgVHkgQ-G7lSBQaOG6p24gxJDhuqd1IFTGsCBWw6AgUGjDoXQgVHJp4buDbiBOZ8OibiBM4buxYw!5e0!3m2!1svi!2s!4v1627877514354!5m2!1svi!2s" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen 
-                loading="lazy" 
+              <iframe
+                src={content?.embedMap || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.8683553050463!2d105.79569839999999!3d21.034306099999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab47962a0e01%3A0xd6142d8ad01b6d8f!2zQ8O0bmcgVHkgQ-G7lSBQaOG6p24gxJDhuqd1IFTGsCBWw6AgUGjDoXQgVHJp4buDbiBOZ8OibiBM4buxYw!5e0!3m2!1svi!2s!4v1627877514354!5m2!1svi!2s"}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               ></iframe>
             </div>

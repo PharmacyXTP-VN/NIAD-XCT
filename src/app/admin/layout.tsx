@@ -52,6 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/products" className="text-black hover:text-[#006b68]">Quản lý sản phẩm</Link>
           <Link href="/admin/news" className="text-black hover:text-[#006b68]">Quản lý tin tức</Link>
           <Link href="/admin/images" className="text-black hover:text-[#006b68]">Quản lý hình ảnh</Link>
+          <Link href="/admin/footer" className="text-black hover:text-[#006b68]">Quản lý footer</Link>
           <button 
             onClick={handleLogout}
             className="text-left text-black hover:text-[#006b68] mt-8 font-semibold"
