@@ -11,7 +11,7 @@ export async function PUT(
     }
 
     const formData = await request.formData();
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:9999";
+  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9999";
     
     console.log("Updating image:", id);
     
@@ -47,7 +47,7 @@ export async function DELETE(
       return NextResponse.json({ message: "Image ID is required" }, { status: 400 });
     }
 
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:9999";
+  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9999";
     
     console.log("Deleting image:", id);
     

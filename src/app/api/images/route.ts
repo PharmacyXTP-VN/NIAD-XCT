@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:9999";
+  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9999";
     
     console.log("Sending request to:", `${backendUrl}/api/images`);
     console.log("Image file size:", imageFile.size, "bytes");

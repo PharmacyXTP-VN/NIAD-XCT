@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://localhost:9999";
+  const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9999";
     
     // Check available banner types
     const types = ["banner", "advantage", "partner", "page-banner", "contact"];
